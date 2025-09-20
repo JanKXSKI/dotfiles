@@ -1,0 +1,5 @@
+vim-plugins:
+  start-only:
+    git:
+      - https://github.com/bfrg/vim-c-cpp-modern
+

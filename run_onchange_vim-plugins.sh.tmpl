@@ -1,0 +1,5 @@
+mkdir -p ~/.vim/pack/start-only/start
+{{ range .vim-plugins.start-only.git -}}
+git clone {{ . | quote }} ~/.vim/pack/start-only/start
+{{ end -}}
+
