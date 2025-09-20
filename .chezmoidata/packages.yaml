@@ -1,0 +1,7 @@
+packages:
+  linux:
+    - epel-release
+    - fzf
+  darwin:
+    - fzf
+

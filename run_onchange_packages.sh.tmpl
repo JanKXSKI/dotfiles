@@ -1,7 +1,12 @@
+#!/usr/bin/env bash
 {{ if eq .chezmoi.os "linux" -}}
-#!/bin/bash
 {{ range .packages.linux -}}
 sudo dnf install {{ . | quote }}
 {{ end -}}
 {{ end -}}
 
+{{ if eq .chezmoi.os "darwin" -}}
+{{ range .packages.darwin -}}
+brew install {{ . | quote }}
+{{ end -}}
+{{ end -}}
