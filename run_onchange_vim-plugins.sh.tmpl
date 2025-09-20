@@ -1,5 +1,7 @@
+#!/usr/bin/env bash
+rm -rf ~/.vim/pack/start-only/start/*
 mkdir -p ~/.vim/pack/start-only/start
-{{ range .vim-plugins.start-only.git -}}
-git clone {{ . | quote }} ~/.vim/pack/start-only/start
+{{ range .plugins.vim.start.git -}}
+git clone {{ . | quote }} ~/.vim/pack/start-only/start/{{- . | base }}
 {{ end -}}
 
