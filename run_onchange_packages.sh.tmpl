@@ -1,0 +1,7 @@
+{{ if eq .chezmoi.os "linux" -}}
+#!/bin/bash
+{{ range .packages.linux -}}
+sudo dnf install {{ . | quote }}
+{{ end -}}
+{{ end -}}
+
