@@ -21,4 +21,3 @@ PS1='\[\033[01;34m\] \w \$\[\033[00m\] '
 fi
 
 for f in ~/.bashrc.d/*.sh; do . $f; done
-
