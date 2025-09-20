@@ -1,5 +1,9 @@
 set rtp+=/opt/homebrew/opt/fzf
+
 syntax enable
+
 inoremap jj <Esc>
 nnoremap zz :FZF<Enter>
+
+set shiftwidth=4 smarttab
 
