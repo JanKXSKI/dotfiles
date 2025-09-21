@@ -5,8 +5,8 @@ syntax enable
 inoremap jj <Esc>
 nnoremap zz :FZF<Enter>
 
-set shiftwidth=4 smarttab
-set listchars=eol:¬,tab:>·,trail:~,extends:>,precedes:<,space:⸱
+set shiftwidth=4 smarttab expandtab
+set listchars=eol:¬,tab:>,trail:~,extends:>,precedes:<,space:⸱
 set list
 highlight SpecialKey ctermfg=darkgrey
 highlight NonText ctermfg=darkgrey
