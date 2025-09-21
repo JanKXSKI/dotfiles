@@ -4,9 +4,10 @@ packages:
     - fzf
     - cmake
     - conan
+    - code-minimap
   darwin:
     - fzf
     - cmake
     - conan
-
+    - code-minimap
 
