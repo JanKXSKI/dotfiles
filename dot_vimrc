@@ -12,3 +12,15 @@ highlight SpecialKey ctermfg=darkgrey
 highlight NonText ctermfg=darkgrey
 set number
 
+call plug#begin()
+Plug 'wfxr/minimap.vim'
+Plug 'morhetz/gruvbox'
+call plug#end()
+
+let g:minimap_width = 20
+let g:minimap_auto_start = 1
+let g:minimap_auto_start_win_enter = 1
+let g:minimap_git_colors = 1
+
+colorscheme gruvbox
+
