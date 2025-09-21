@@ -2,6 +2,11 @@ packages:
   linux:
     - epel-release
     - fzf
+    - cmake
+    - conan
   darwin:
     - fzf
+    - cmake
+    - conan
+
 

@@ -10,4 +10,5 @@ set listchars=eol:¬,tab:>·,trail:~,extends:>,precedes:<,space:⸱
 set list
 highlight SpecialKey ctermfg=darkgrey
 highlight NonText ctermfg=darkgrey
+set number
 
