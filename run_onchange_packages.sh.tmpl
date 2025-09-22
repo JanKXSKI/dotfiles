@@ -7,7 +7,7 @@ sudo dnf install {{ . | quote }}
 wget {{ .url | quote }}
 tar -zxvf {{ .url | base }}
 mkdir -p ~/bin
-cp -n {{ .url | base }}/{{ .bin }} ~/bin
+cp -n {{ .url | base | trimSuffix ".tar.gz" }}/{{ .bin }} ~/bin
 rm -rf {{ .url | base | trimSuffix ".tar.gz" }}
 rm -f {{ .url | base }}
 {{ end -}}
