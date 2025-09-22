@@ -4,6 +4,7 @@ syntax enable
 
 inoremap jj <Esc>
 nnoremap zz :FZF<Enter>
+nnoremap <C-l> :let @d=expand('%:p') . ':' . line('.')<CR>
 
 set shiftwidth=4 smarttab expandtab
 set listchars=eol:¬,tab:»\ ,trail:~,extends:>,precedes:<,space:⸱
