@@ -20,4 +20,9 @@ else
 PS1='\[\033[01;34m\] \w \$\[\033[00m\] '
 fi
 
+# Aliases
+alias tmux='tmux -2'
+
+# Other configuration
 for f in ~/.bashrc.d/*.sh; do . $f; done
+
