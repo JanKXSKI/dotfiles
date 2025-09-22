@@ -12,6 +12,12 @@ highlight SpecialKey ctermfg=darkgrey
 highlight NonText ctermfg=darkgrey
 set number
 
+if &term =~ '\%(linux\|tmux\)'
+    set termguicolors
+    let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
+    let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+endif
+
 call plug#begin()
 Plug 'morhetz/gruvbox'
 Plug 'wfxr/minimap.vim'
@@ -22,12 +28,6 @@ try
 catch
     echom "Gruvbox still missing, expected when installing plugins."
 endtry
-
-if &term =~ '\%(screen\|tmux\)'
-    let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-    let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-    set termguicolors
-endif
 
 let g:minimap_width = 20
 let g:minimap_auto_start = 1
