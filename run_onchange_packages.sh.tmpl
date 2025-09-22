@@ -1,7 +1,15 @@
 #!/usr/bin/env bash
 {{ if eq .chezmoi.os "linux" -}}
-{{ range .packages.linux -}}
+{{ range .packages.dnf -}}
 sudo dnf install {{ . | quote }}
+{{ end -}}
+{{ range .packages.wget -}}
+wget {{ .url | quote }}
+tar -zxvf {{ .url | base }}
+mkdir -p ~/bin
+cp -n {{ .url | base }}/{{ .bin }} ~/bin
+rm -rf {{ .url | base | trimSuffix ".tar.gz" }}
+rm -f {{ .url | base }}
 {{ end -}}
 {{ end -}}
 
