@@ -12,6 +12,7 @@ set list
 highlight SpecialKey ctermfg=darkgrey
 highlight NonText ctermfg=darkgrey
 set number
+set laststatus=0 " disable status bar
 
 if &term =~ '\%(linux\|tmux\)'
     set termguicolors
