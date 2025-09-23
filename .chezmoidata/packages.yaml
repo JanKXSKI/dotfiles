@@ -12,4 +12,5 @@ packages:
     - conan
     - code-minimap
     - bat
+    - tmux
 
