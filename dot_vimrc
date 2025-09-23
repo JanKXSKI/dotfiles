@@ -24,11 +24,15 @@ Plug 'morhetz/gruvbox'
 Plug 'wfxr/minimap.vim'
 call plug#end()
 
+let g:gruvbox_contrast_dark = 'soft'
+
 try
     colorscheme gruvbox
 catch
     echom "Gruvbox still missing, expected when installing plugins."
 endtry
+
+set background=dark
 
 let g:minimap_width = 20
 let g:minimap_auto_start = 1
