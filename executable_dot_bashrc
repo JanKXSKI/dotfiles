@@ -13,12 +13,7 @@ export PATH
 # allow sudo to autocomplete
 complete -cf sudo
 
-# Color Prompt
-if [[ ${EUID} == 0 ]] ; then
-PS1='\[\033[01;34m\] \W \$\[\033[00m\] '
-else
-PS1='\[\033[01;34m\] \w \$\[\033[00m\] '
-fi
+PS1='\w \$ '
 
 # Aliases
 alias tmux='tmux -2'
