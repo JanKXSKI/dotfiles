@@ -3,8 +3,12 @@ set rtp+=/opt/homebrew/opt/fzf
 syntax enable
 
 inoremap jj <Esc>
-nnoremap zz :FZF<Enter>
-nnoremap <C-l> :let @d=expand('%:p').':'.line('.') <bar> let @f=expand('%:p') <bar> let @l=line('w0').','.line('w$') <CR>
+let mapleader = " "
+nnoremap <Leader>o :FZF<Enter>
+nnoremap <Leader>l :let @d=expand('%:p').':'.line('.') <bar> let @f=expand('%:p') <bar> let @l=line('w0').','.line('w$') <CR>
+nnoremap <Leader>g :tab term ++close bash -c "git status && bash" <CR>
+
+tnoremap <C-i> <C-w>N
 
 set shiftwidth=4 smarttab expandtab
 set listchars=eol:¬,tab:»\ ,trail:~,extends:>,precedes:<,space:⸱
