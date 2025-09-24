@@ -8,8 +8,7 @@ nnoremap <Leader>o :FZF<Enter>
 nnoremap <Leader>l :let @d=expand('%:p').':'.line('.') <bar> let @f=expand('%:p') <bar> let @l=line('w0').','.line('w$') <CR>
 nnoremap <Leader>g :tab term ++close bash -c "git status && bash" <CR>
 
-tnoremap <C-i> <C-w>N
-tunmap <Tab>
+tnoremap <C-W><Space> <C-W>N
 
 set shiftwidth=4 smarttab expandtab
 set listchars=eol:¬,tab:»\ ,trail:~,extends:>,precedes:<,space:⸱
