@@ -9,6 +9,7 @@ nnoremap <Leader>l :let @d=expand('%:p').':'.line('.') <bar> let @f=expand('%:p'
 nnoremap <Leader>g :tab term ++close bash -c "git status && bash" <CR>
 
 tnoremap <C-i> <C-w>N
+tunmap <Tab>
 
 set shiftwidth=4 smarttab expandtab
 set listchars=eol:¬,tab:»\ ,trail:~,extends:>,precedes:<,space:⸱
