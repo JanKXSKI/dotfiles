@@ -1,12 +1,13 @@
 set rtp+=/opt/homebrew/opt/fzf
 
 syntax enable
+set hidden
 
 inoremap jj <Esc>
 let mapleader = " "
-nnoremap <Leader>o :FZF<Enter>
+nnoremap <Leader>o :OpFile<Enter>
 nnoremap <Leader>l :let @d=expand('%:p').':'.line('.') <bar> let @f=expand('%:p') <bar> let @l=line('w0').','.line('w$') <CR>
-nnoremap <Leader>g :tab term ++close bash -c "git status && bash" <CR>
+nnoremap <Leader>g :term ++curwin ++close bash -c "git status && bash" <CR>
 
 tnoremap <C-W><Space> <C-W>N
 
@@ -27,6 +28,7 @@ endif
 call plug#begin()
 Plug 'morhetz/gruvbox'
 Plug 'wfxr/minimap.vim'
+Plug 'easymotion/vim-easymotion'
 call plug#end()
 
 let g:gruvbox_contrast_dark = 'soft'
@@ -55,4 +57,8 @@ let g:minimap_cursor_diff_color = 'GruvboxBlueBold'
 let g:minimap_range_diffadd_color = 'GruvboxGreenSign'
 let g:minimap_range_diffremove_color = 'GruvboxRedSign'
 let g:minimap_range_diff_color = 'GruvboxBlueSign'
+
+let g:EasyMotion_do_mapping = 0
+nmap <Leader>s <Plug>(easymotion-overwin-f2)
+let g:EasyMotion_smartcase = 1
 
