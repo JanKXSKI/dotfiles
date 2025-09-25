@@ -1,4 +1,4 @@
-let s:preview = "'ls -A --color=always $(dirname {}) | bat -p --color=always --highlight-line $(ls -lA $(dirname {}) | awk -v bn=$(basename {}) ''$9==bn { print NR-1; exit 0 }'')'"
+let s:preview = "'ls -AI .*.swp --color=always $(dirname {}) | bat -p --color=always --highlight-line $(ls -lAI .*.swp $(dirname {}) | awk -v bn=$(basename {}) ''$9==bn { print NR-1; exit 0 }'')'"
 let s:bindPreviewUpDown = "'--bind', 'ctrl-u:preview-half-page-up', '--bind', 'ctrl-d:preview-half-page-down'"
 let s:options = "['--preview', "..s:preview..", "..s:bindPreviewUpDown.."]"
 exe "command OpFile call fzf#run({'options':" s:options ", 'sink': 'e'})"

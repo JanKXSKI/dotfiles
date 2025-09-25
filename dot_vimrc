@@ -59,6 +59,7 @@ let g:minimap_range_diffremove_color = 'GruvboxRedSign'
 let g:minimap_range_diff_color = 'GruvboxBlueSign'
 
 let g:EasyMotion_do_mapping = 0
-nmap <Leader>s <Plug>(easymotion-overwin-f2)
+map <Leader>f <Plug>(easymotion-bd-f2)
+map <Leader>t <Plug>(easymotion-bd-t2)
 let g:EasyMotion_smartcase = 1
 
