@@ -1,0 +1,9 @@
+#!/usr/bin/env bash
+
+dirs=$(echo $1 | awk -F/ '{ s= "."; for (i=1; i<NF; ++i) { for (j=1; j<=i; ++j) s = s "/" $j; print s; s = "." } }')
+fifs=$(echo $dirs | xargs -n 1 | awk '{print "lspathfifo" NR}')
+echo $fifs | xargs -I{} mkfifo lspathfifo{}
+echo $dirs | xargs -I{} ls {} > fifo{}
+echo $dirs | xargs -I{} echo '<(fifo{})' | xargs paste
+echo $dirs | xargs -I{} rm fifo{}
+
