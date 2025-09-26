@@ -2,9 +2,19 @@
 
 path=$1
 width=$2
-cols=$(echo $path | awk -F/ '{print NF}')
-colw=$(($width / $cols - 2 - $cols - 1))
-[[ $colw -lt 1 ]] && echo "not enough space..." && exit 1
+cols=$(echo $path | awk -F/ '{print NF-1}')
+colw=$((($width - ($cols - 1)) / $cols - 2))
+if [[ $colw -lt 4 ]]; then
+    if [[ $cols -gt 1 ]]; then
+        rerun=$(realpath $0)
+        cd ${path%%/*}
+        $rerun ${path#*/} $width
+        exit
+    fi
+    echo "not enough space to fit a single column..."
+    exit
+fi
+
 while [[ ${#clws[@]} -lt $((width%cols)) ]]; do clws+=($(($colw + 1))); done
 while [[ ${#clws[@]} -lt $cols ]]; do clws+=($colw); done
 
@@ -13,6 +23,9 @@ fifs=$(echo $dirs | xargs -n 1 | awk '{print "lspathfifo" NR}')
 
 echo $fifs | xargs -n 1 mkfifo
 (trap 'echo "$fifs" | xargs -n 1 rm' EXIT
+
 paste <(echo $dirs | xargs -n 1) <(echo $fifs | xargs -n 1) | while read d f; do ls -A1 $d | xargs -L 1 printf " %-${colw}.${colw}s \\n" > $f; done &
-echo $fifs | xargs paste -d" "
+echo $fifs | xargs paste -d":" | awk -F: "{ for (i=1; i<=NF; ++i) printf \"%$(($colw + 2))s\", \$i; printf \"\\n\" }"
+
 )
+
