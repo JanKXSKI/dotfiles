@@ -1,9 +1,18 @@
 #!/usr/bin/env bash
 
-dirs=$(echo $1 | awk -F/ '{ s= "."; for (i=1; i<NF; ++i) { for (j=1; j<=i; ++j) s = s "/" $j; print s; s = "." } }')
-fifs=$(echo $dirs | xargs -n 1 | awk '{print "lspathfifo" NR}')
-echo $fifs | xargs -I{} mkfifo lspathfifo{}
-echo $dirs | xargs -I{} ls {} > fifo{}
-echo $dirs | xargs -I{} echo '<(fifo{})' | xargs paste
-echo $dirs | xargs -I{} rm fifo{}
+path=$1
+width=$2
+cols=$(echo $path | awk -F/ '{print NF}')
+colw=$(($width / $cols - 2 - $cols - 1))
+[[ $colw -lt 1 ]] && echo "not enough space..." && exit 1
+while [[ ${#clws[@]} -lt $((width%cols)) ]]; do clws+=($(($colw + 1))); done
+while [[ ${#clws[@]} -lt $cols ]]; do clws+=($colw); done
 
+dirs=$(echo $path | awk -F/ '{ s= "."; for (i=1; i<NF; ++i) { for (j=1; j<=i; ++j) s = s "/" $j; print s; s = "." } }')
+fifs=$(echo $dirs | xargs -n 1 | awk '{print "lspathfifo" NR}')
+
+echo $fifs | xargs -n 1 mkfifo
+(trap 'echo "$fifs" | xargs -n 1 rm' EXIT
+paste <(echo $dirs | xargs -n 1) <(echo $fifs | xargs -n 1) | while read d f; do ls -A1 $d | xargs -L 1 printf " %-${colw}.${colw}s \\n" > $f; done &
+echo $fifs | xargs paste -d" "
+)

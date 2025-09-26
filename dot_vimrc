@@ -17,7 +17,6 @@ set list
 highlight SpecialKey ctermfg=darkgrey
 highlight NonText ctermfg=darkgrey
 set number
-set laststatus=0 " disable status bar
 
 if &term =~ '\%(linux\|tmux\)'
     set termguicolors
@@ -40,6 +39,8 @@ catch
 endtry
 
 set background=dark
+hi! link StatusLineTerm StatusLine
+hi! link StatusLineTermNC StatusLineNC
 
 let g:minimap_width = 20
 let g:minimap_auto_start = 1
