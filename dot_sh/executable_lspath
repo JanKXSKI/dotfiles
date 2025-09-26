@@ -3,6 +3,10 @@
 path=$1
 width=$2
 cols=$(echo $path | awk -F/ '{print NF-1}')
+if [[ $cols -lt 1 ]]; then
+    echo $path
+    exit
+fi
 colw=$((($width - ($cols - 1)) / $cols - 2))
 if [[ $colw -lt 4 ]]; then
     if [[ $cols -gt 1 ]]; then
