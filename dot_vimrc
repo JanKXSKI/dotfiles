@@ -3,14 +3,14 @@ set rtp+=/opt/homebrew/opt/fzf
 syntax enable
 set hidden
 
-inoremap jj <Esc>
+inoremap ii <Esc>
 let mapleader = " "
 nnoremap <Leader>o :OpFile<Enter>
 nnoremap <Leader>g :OpGrep 
 nnoremap <Leader>l :let @d=expand('%:p').':'.line('.') <bar> let @f=expand('%:p') <bar> let @l=line('w0').','.line('w$') <CR>
 nnoremap <Leader>p :term ++curwin ++close bash -c "git status && bash" <CR>
 
-tnoremap jj <C-W>N
+tnoremap ii <C-W>N
 
 set shiftwidth=4 smarttab expandtab
 set listchars=eol:¬,tab:»\ ,trail:~,extends:>,precedes:<,space:⸱
