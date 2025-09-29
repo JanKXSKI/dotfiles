@@ -28,7 +28,7 @@ fifs=$(echo $dirs | xargs -n 1 | awk '{print "lspathfifo" NR}')
 echo $fifs | xargs -n 1 mkfifo
 (trap 'echo "$fifs" | xargs -n 1 rm' EXIT
 
-paste <(echo $dirs | xargs -n 1) <(echo $fifs | xargs -n 1) | while read d f; do ls -A1 $d > $f; done &
+paste <(echo $dirs | xargs -n 1) <(echo $fifs | xargs -n 1) | while read d f; do ls -pA1 $d > $f; done &
 
 grid='grid["", ""] = " "; grid["", 1] = "┌"; grid["", 2] = "│"; grid[1, ""] = "┐"; grid[1, 1] = "─"; grid[1, 2] = "┘"; grid[2, ""] = "│"; grid[2, 1] = "└"; grid[2, 2] = " "'
 elem="for (i=1; i<=NF; ++i) { elem[i] = sprintf(\" %-${colw}.${colw}s \", \$i); if (\$i == nees[i]) { gsub(\" \", \"─\", elem[i]); done[i] = 1; } else if (done[i] == 1) done[i] = 2 }"
