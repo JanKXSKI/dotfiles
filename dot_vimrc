@@ -8,9 +8,9 @@ nnoremap <Leader>o :OpFile <CR>
 nnoremap <Leader>s :vsplit <CR> <C-W>l :OpFile <CR>
 nnoremap <Leader>g :OpGrep 
 nnoremap <Leader>l :let @d=expand('%:p').':'.line('.') <bar> let @f=expand('%:p') <bar> let @l=line('w0').','.line('w$') <CR>
-nnoremap <Leader>p :term ++rows=20 bash -c "git status; bash" <CR>
+nnoremap <Leader>p :call ReplaceOrAddTerminal() <CR>
 
-tnoremap ii exit <CR>
+tnoremap ii <C-D>
 
 set shiftwidth=4 smarttab expandtab
 set listchars=eol:¬,tab:»\ ,trail:~,extends:>,precedes:<,space:⸱
