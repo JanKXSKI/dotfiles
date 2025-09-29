@@ -6,8 +6,9 @@ set hidden
 inoremap jj <Esc>
 let mapleader = " "
 nnoremap <Leader>o :OpFile<Enter>
+nnoremap <Leader>g :OpGrep
 nnoremap <Leader>l :let @d=expand('%:p').':'.line('.') <bar> let @f=expand('%:p') <bar> let @l=line('w0').','.line('w$') <CR>
-nnoremap <Leader>g :term ++curwin ++close bash -c "git status && bash" <CR>
+nnoremap <Leader>p :term ++curwin ++close bash -c "git status && bash" <CR>
 
 tnoremap <C-W><Space> <C-W>N
 
@@ -28,7 +29,6 @@ call plug#begin()
 Plug 'morhetz/gruvbox'
 Plug 'wfxr/minimap.vim'
 Plug 'easymotion/vim-easymotion'
-Plug 'junegunn/fzf.vim'
 call plug#end()
 
 let g:gruvbox_contrast_dark = 'soft'

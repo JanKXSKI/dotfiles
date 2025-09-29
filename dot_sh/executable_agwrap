@@ -1,0 +1,6 @@
+#! /usr/bin/env bash
+
+curi=$1
+maxi=$2
+
+echo $(($curi % $maxi + 1))
