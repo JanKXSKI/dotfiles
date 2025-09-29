@@ -1,6 +1,6 @@
 let s:preview = "'~/.sh/lspath {} $FZF_PREVIEW_COLUMNS'"
 let s:bindPreviewUpDown = "'--bind', 'ctrl-u:preview-half-page-up', '--bind', 'ctrl-d:preview-half-page-down'"
-let s:bindClearQuery = "'--bind', 'alt-e:clear-query'"
+let s:bindClearQuery = "'--bind', 'ctrl-l:clear-query'"
 let s:options = "['--query', expand('%:h')..' ', '--preview', "..s:preview..", "..s:bindPreviewUpDown..", "..s:bindClearQuery.."]"
 exe "command OpFile call fzf#run({'options':" s:options ", 'sink': 'e'})"
 
