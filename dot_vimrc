@@ -28,6 +28,7 @@ call plug#begin()
 Plug 'morhetz/gruvbox'
 Plug 'wfxr/minimap.vim'
 Plug 'easymotion/vim-easymotion'
+Plug 'junegunn/fzf.vim'
 call plug#end()
 
 let g:gruvbox_contrast_dark = 'soft'
