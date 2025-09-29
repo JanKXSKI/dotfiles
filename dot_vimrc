@@ -10,7 +10,7 @@ nnoremap <Leader>g :OpGrep
 nnoremap <Leader>l :let @d=expand('%:p').':'.line('.') <bar> let @f=expand('%:p') <bar> let @l=line('w0').','.line('w$') <CR>
 nnoremap <Leader>p :term ++curwin ++close bash -c "git status && bash" <CR>
 
-tnoremap <C-W><Space> <C-W>N
+tnoremap jj <C-W>N
 
 set shiftwidth=4 smarttab expandtab
 set listchars=eol:¬,tab:»\ ,trail:~,extends:>,precedes:<,space:⸱
