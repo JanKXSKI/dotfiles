@@ -13,6 +13,6 @@ exe "command OpGitLog call fzf#run({'source': " s:source ", 'options':" s:option
 
 let s:source = "'ag -cU <args>'"
 let s:preview = "'~/.sh/agprev {1} $FZF_PREVIEW_LABEL $FZF_PREVIEW_LINES <args>'"
-let s:bind = "'--bind', 'ctrl-n:transform-preview-label(bash -c \"~/.sh/agwrap {1} $FZF_PREVIEW_LABEL <args>\")+refresh-preview,focus:change-preview-label(1)'"
+let s:bind = "'--bind', 'ctrl-n:transform-preview-label(bash -c ''~/.sh/agwrap {1} $FZF_PREVIEW_LABEL <args>'')+refresh-preview,focus:change-preview-label(1)'"
 let s:options = "['-d', ':', '--nth', '1', '--preview-label', '1', '--preview', "..s:preview..", "..s:bind.."]"
 exe "command -nargs=+ OpGrep call fzf#run({'source': " s:source ", 'options':" s:options "})"
