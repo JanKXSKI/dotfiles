@@ -25,3 +25,7 @@ function! HideTerminalAndReplaceWindowWithBuffer()
     silent normal! VpG
     setlocal nomodified
 endfunction
+
+function! TerminalSensitiveWindowMove(dirKey)
+    execute "wincmd" a:dirKey
+endfunction

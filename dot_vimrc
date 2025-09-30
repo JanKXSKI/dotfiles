@@ -4,19 +4,26 @@ syntax enable
 
 inoremap ii <Esc>
 nnoremap <C-H> <C-W>h
-nnoremap <C-S-H> :MinimapToggle <CR> <C-W>H :MinimapToggle <CR>
+nnoremap <C-S-H> <C-W>h
 nnoremap <C-J> <C-W>j
-nnoremap <C-S-J> :MinimapToggle <CR> <C-W>J :MinimapToggle <CR>
+nnoremap <C-S-J> <C-W>j
 nnoremap <C-K> <C-W>k
-nnoremap <C-S-K> :MinimapToggle <CR> <C-W>K :MinimapToggle <CR>
+nnoremap <C-S-K> <C-W>k
 nnoremap <C-L> <C-W>l
-nnoremap <C-S-L> :MinimapToggle <CR> <C-W>L :MinimapToggle <CR>
+nnoremap <C-S-L> <C-W>l
 
 let mapleader = " "
+
+nnoremap <Leader>h :call TerminalSensitiveWindowMove("H") <CR>
+nnoremap <Leader>j :call TerminalSensitiveWindowMove("J") <CR>
+nnoremap <Leader>k :call TerminalSensitiveWindowMove("K") <CR>
+nnoremap <Leader>l :call TerminalSensitiveWindowMove("L") <CR>
+
 nnoremap <Leader>o :OpFile <CR>
 nnoremap <Leader>s :vsplit <CR> <C-W>l :OpFile <CR>
 nnoremap <Leader>g :OpGrep 
-nnoremap <Leader>l :let @d=expand('%:p').':'.line('.') <bar> let @f=expand('%:p') <bar> let @l=line('w0').','.line('w$') <CR>
+nnoremap <Leader>b :OpGitLog
+nnoremap <Leader>d :let @d=expand('%:p').':'.line('.') <bar> let @f=expand('%:p') <bar> let @l=line('w0').','.line('w$') <CR>
 
 nnoremap <C-P> :call AddOrFocusTerminal() <CR>
 tnoremap <C-P> <C-W>: hide q <CR>
@@ -37,7 +44,6 @@ endif
 
 call plug#begin()
 Plug 'morhetz/gruvbox'
-Plug 'wfxr/minimap.vim'
 Plug 'easymotion/vim-easymotion'
 call plug#end()
 
@@ -52,23 +58,6 @@ endtry
 set background=dark
 hi! link StatusLineTerm StatusLine
 hi! link StatusLineTermNC StatusLineNC
-
-let g:minimap_width = 20
-let g:minimap_auto_start = 1
-let g:minimap_auto_start_win_enter = 1
-let g:minimap_git_colors = 1
-let g:minimap_highlight_search = 1
-let g:minimap_range_color = 'GruvboxYellowSign'
-let g:minimap_search_color = 'GruvboxAquaBold'
-let g:minimap_diffadd_color = 'GruvboxGreen'
-let g:minimap_diffremove_color = 'GruvboxRed'
-let g:minimap_diff_color = 'GruvboxBlue'
-let g:minimap_cursor_diffadd_color = 'GruvboxGreenBold'
-let g:minimap_cursor_diffremove_color = 'GruvboxRedBold'
-let g:minimap_cursor_diff_color = 'GruvboxBlueBold'
-let g:minimap_range_diffadd_color = 'GruvboxGreenSign'
-let g:minimap_range_diffremove_color = 'GruvboxRedSign'
-let g:minimap_range_diff_color = 'GruvboxBlueSign'
 
 let g:EasyMotion_do_mapping = 0
 map <Leader>f <Plug>(easymotion-bd-f2)
