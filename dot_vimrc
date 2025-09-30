@@ -4,9 +4,13 @@ syntax enable
 
 inoremap ii <Esc>
 nnoremap <C-H> <C-W>h
+nnoremap <C-S-H> :MinimapToggle <CR> <C-W>H :MinimapToggle <CR>
 nnoremap <C-J> <C-W>j
+nnoremap <C-S-J> :MinimapToggle <CR> <C-W>J :MinimapToggle <CR>
 nnoremap <C-K> <C-W>k
+nnoremap <C-S-K> :MinimapToggle <CR> <C-W>K :MinimapToggle <CR>
 nnoremap <C-L> <C-W>l
+nnoremap <C-S-L> :MinimapToggle <CR> <C-W>L :MinimapToggle <CR>
 
 let mapleader = " "
 nnoremap <Leader>o :OpFile <CR>
