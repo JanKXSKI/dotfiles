@@ -3,6 +3,9 @@ function! AddOrFocusTerminal()
     if &buftype == "terminal"
         return
     endif
+    if bufname() == ''
+        close
+    endif
     let l:terminals = filter(getbufinfo(), "getbufvar(v:val.bufnr, \"&buftype\") == \"terminal\"")
     if !empty(l:terminals)
         execute "sb" l:terminals[0].bufnr
