@@ -1,11 +1,11 @@
-function! FocusOrAddTerminal()
+function! AddOrFocusTerminal()
     wincmd b
     if &buftype == "terminal"
         return
     endif
     let l:terminals = filter(getbufinfo(), "getbufvar(v:val.bufnr, \"&buftype\") == \"terminal\"")
     if !empty(l:terminals)
-        execute "buffer" l:terminals[0].bufnr
+        execute "sb" l:terminals[0].bufnr
     else
         term
     endif
@@ -18,8 +18,8 @@ function! HideTerminalAndReplaceWindowWithBuffer()
         echom "Tried to yank terminal buffer, but not in a terminal."
         return
     endif
-    % yank
+    silent % yank
     hide ene
-    put!
+    silent normal! VpG
     setlocal nomodified
 endfunction
