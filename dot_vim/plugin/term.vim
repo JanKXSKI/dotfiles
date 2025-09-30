@@ -13,7 +13,6 @@ function! AddOrFocusTerminal()
         term
     endif
     wincmd J
-    resize 20
 endfunction
 
 function! HideTerminalAndReplaceWindowWithBuffer()
