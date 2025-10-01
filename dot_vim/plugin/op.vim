@@ -1,8 +1,9 @@
+let s:source = "'find . \"(\" -type f -or -type l \")\" -and ! -name *.swp | sed s#^\\./##'"
 let s:preview = "'~/.sh/lspath {} $FZF_PREVIEW_COLUMNS'"
 let s:bindPreviewUpDown = "'--bind', 'ctrl-u:preview-half-page-up', '--bind', 'ctrl-d:preview-half-page-down'"
 let s:bindClearQuery = "'--bind', 'ctrl-l:clear-query'"
 let s:options = "['--preview', "..s:preview..", "..s:bindPreviewUpDown..", "..s:bindClearQuery.."]"
-exe "command OpFile call fzf#run({'options':" s:options ", 'sink': 'e'})"
+exe "command OpFile call fzf#run({'source': " s:source ",'options':" s:options ", 'sink': 'e'})"
 
 let s:source = "'git log --format=''%h %an %ar: %s'' -- '..expand('%')"
 let s:previewGit = "'echo {} | awk ''{print $1}'' | xargs -I{} git show {}:'..expand('%')"

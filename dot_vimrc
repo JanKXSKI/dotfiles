@@ -22,7 +22,7 @@ nnoremap <Leader>k :call TerminalSensitiveWindowMove("K") <CR>
 nnoremap <Leader>l :call TerminalSensitiveWindowMove("L") <CR>
 
 nnoremap <Leader>o :OpFile <CR>
-nnoremap <Leader>s :vsplit <CR> <C-W>l :OpFile <CR>
+nnoremap <Leader>s :vsplit <CR> :OpFile <CR>
 nnoremap <Leader>g :OpGrep <C-R><C-W>
 nnoremap <Leader>b :OpGitLog
 nnoremap <Leader>d :let @d=expand('%:p').':'.line('.') <bar> let @f=expand('%:p') <bar> let @l=line('w0').','.line('w$') <CR>

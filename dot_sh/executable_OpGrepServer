@@ -1,0 +1,27 @@
+#! /usr/bin/env bash
+set -x
+
+function init {
+    file=$1
+    cont=$2
+    agas=${@:3}
+    maxi=$(ag $agas $file | wc -l)
+    curi=0
+    next
+}
+
+function next {
+    curi=$(($curi % $maxi + 1))
+    $(dirname $0)/OpGrepPreview $file $curi $cont $agas
+}
+
+while true; do
+    read cmd args
+    echo $args
+    case $cmd in
+        "init") init $args ;;
+        "next") next ;;
+        *) echo OpGrepServer does not recognize command $cmd ;;
+    esac
+done
+
