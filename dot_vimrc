@@ -14,6 +14,8 @@ nnoremap <C-S-L> <C-W>l
 
 let mapleader = " "
 
+nnoremap <Leader><Backspace> :e # <CR>
+
 nnoremap <Leader>h :call TerminalSensitiveWindowMove("H") <CR>
 nnoremap <Leader>j :call TerminalSensitiveWindowMove("J") <CR>
 nnoremap <Leader>k :call TerminalSensitiveWindowMove("K") <CR>
