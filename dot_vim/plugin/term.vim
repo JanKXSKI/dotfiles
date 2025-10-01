@@ -4,7 +4,7 @@ function! AddOrFocusTerminal()
         return
     endif
     if bufname() == ''
-        close
+        bd
     endif
     let l:terminals = filter(getbufinfo(), "getbufvar(v:val.bufnr, \"&buftype\") == \"terminal\"")
     if !empty(l:terminals)
