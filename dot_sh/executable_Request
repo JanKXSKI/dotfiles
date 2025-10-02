@@ -7,6 +7,4 @@ mkfifo $responseFifo
 trap "rm $responseFifo" EXIT
 
 echo $responseFifo ${@:2} > $fifo
-exec {fifofd}<$responseFifo
-while read -u $fifofd response; do echo $response; done;
-
+cat $reponseFifo

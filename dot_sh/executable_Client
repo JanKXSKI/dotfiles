@@ -10,9 +10,5 @@ trap "rm $responseFifo" EXIT
 
 while read cmd; do
     echo $responseFifo $cmd >&$fifofd
-    exec {responseFifofd}<$responseFifo
-    while read -u $responseFifofd response; do
-       echo $response
-    done
-    exec {responseFifofd}<&-
+    cat $responseFifo
 done

@@ -1,0 +1,29 @@
++ fifo=.sh/160449.fifo
++ exec
+++ dirname .sh/Client
++ responseFifo=.sh/160555.fifo
++ mkfifo .sh/160555.fifo
++ trap 'rm .sh/160555.fifo' EXIT
++ read cmd
++ echo .sh/160555.fifo init .vimrc 20 let
++ cat .sh/160555.fifo
++ read cmd
++ echo .sh/160555.fifo next
++ cat .sh/160555.fifo
++ read cmd
++ echo .sh/160555.fifo preview
++ cat .sh/160555.fifo
++ read cmd
++ echo .sh/160555.fifo preview
++ cat .sh/160555.fifo
++ read cmd
++ echo .sh/160555.fifo next
++ cat .sh/160555.fifo
++ read cmd
++ echo .sh/160555.fifo next
++ cat .sh/160555.fifo
++ read cmd
++ echo .sh/160555.fifo preview
++ cat .sh/160555.fifo
++ read cmd
+++ rm .sh/160555.fifo

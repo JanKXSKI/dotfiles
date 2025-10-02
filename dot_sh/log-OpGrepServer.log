@@ -1,0 +1,64 @@
+++ dirname .sh/OpGrepServer
++ fifo=.sh/160449.fifo
++ mkfifo .sh/160449.fifo
++ trap 'rm .sh/160449.fifo' EXIT
++ echo .sh/160449.fifo
++ exec
++ read -u 11 responseFifo cmd args
++ case $cmd in
++ init .vimrc 20 let
++ file=.vimrc
++ cont=20
++ agas=let
+++ ag let .vimrc
+++ wc -l
++ maxi=8
++ curi=0
++ next
++ curi=1
++ rang='rmin = $1 - 20/2; rmax = $1 + 20/2; if (rmin < 1) { rmax -= (rmin - 1); rmin = 1; }  printf "-r %d:%d -H %d", rmin, rmax, $1'
+++ ag --numbers let .vimrc
+++ awk -F: 'FNR == 1 { rmin = $1 - 20/2; rmax = $1 + 20/2; if (rmin < 1) { rmax -= (rmin - 1); rmin = 1; }  printf "-r %d:%d -H %d", rmin, rmax, $1 }'
++ bata='-r 5:25 -H 15'
++ echo OK
++ read -u 11 responseFifo cmd args
++ case $cmd in
++ next
++ curi=2
++ rang='rmin = $1 - 20/2; rmax = $1 + 20/2; if (rmin < 1) { rmax -= (rmin - 1); rmin = 1; }  printf "-r %d:%d -H %d", rmin, rmax, $1'
+++ ag --numbers let .vimrc
+++ awk -F: 'FNR == 2 { rmin = $1 - 20/2; rmax = $1 + 20/2; if (rmin < 1) { rmax -= (rmin - 1); rmin = 1; }  printf "-r %d:%d -H %d", rmin, rmax, $1 }'
++ bata='-r 18:38 -H 28'
++ echo OK
++ read -u 11 responseFifo cmd args
++ case $cmd in
++ preview
++ bat -n --color=always -r 18:38 -H 28 .vimrc
++ read -u 11 responseFifo cmd args
++ case $cmd in
++ preview
++ bat -n --color=always -r 18:38 -H 28 .vimrc
++ read -u 11 responseFifo cmd args
++ case $cmd in
++ next
++ curi=3
++ rang='rmin = $1 - 20/2; rmax = $1 + 20/2; if (rmin < 1) { rmax -= (rmin - 1); rmin = 1; }  printf "-r %d:%d -H %d", rmin, rmax, $1'
+++ ag --numbers let .vimrc
+++ awk -F: 'FNR == 3 { rmin = $1 - 20/2; rmax = $1 + 20/2; if (rmin < 1) { rmax -= (rmin - 1); rmin = 1; }  printf "-r %d:%d -H %d", rmin, rmax, $1 }'
++ bata='-r 33:53 -H 43'
++ echo OK
++ read -u 11 responseFifo cmd args
++ case $cmd in
++ next
++ curi=4
++ rang='rmin = $1 - 20/2; rmax = $1 + 20/2; if (rmin < 1) { rmax -= (rmin - 1); rmin = 1; }  printf "-r %d:%d -H %d", rmin, rmax, $1'
+++ ag --numbers let .vimrc
+++ awk -F: 'FNR == 4 { rmin = $1 - 20/2; rmax = $1 + 20/2; if (rmin < 1) { rmax -= (rmin - 1); rmin = 1; }  printf "-r %d:%d -H %d", rmin, rmax, $1 }'
++ bata='-r 34:54 -H 44'
++ echo OK
++ read -u 11 responseFifo cmd args
++ case $cmd in
++ preview
++ bat -n --color=always -r 34:54 -H 44 .vimrc
++ read -u 11 responseFifo cmd args
++ rm .sh/160449.fifo
