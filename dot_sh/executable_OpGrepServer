@@ -10,7 +10,7 @@ exec {fifofd}<>$fifo
 
 function init {
     file=$1
-    cont=$2
+    cont=$(($2-2))
     agas=${@:3}
     maxi=$(ag $agas $file | wc -l)
     curi=0
@@ -25,6 +25,10 @@ function next {
 }
 
 function preview {
+    if [[ -z $bata ]]; then
+        echo "Loading preview..."
+        return
+    fi
     bat -n --color=always $bata $file
 }
 
