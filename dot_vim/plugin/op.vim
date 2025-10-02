@@ -1,4 +1,4 @@
-let s:source = "'find . ! -readable -prune -or \"(\" -type f -or -type l \")\" -and ! -name *.swp | sed s#^\\./##'"
+let s:source = "'find . \"(\" -type f -or -type l \")\" -and ! -name *.swp | sed s#^\\./## 2> /dev/null'"
 let s:preview = "'"..$HOME.."/.sh/lspath {} $FZF_PREVIEW_COLUMNS'"
 let s:bindPreviewUpDown = "'--bind', 'ctrl-u:preview-half-page-up', '--bind', 'ctrl-d:preview-half-page-down'"
 let s:bindClearQuery = "'--bind', 'ctrl-l:clear-query'"

@@ -6,7 +6,7 @@ mkfifo $fifo
 trap "rm $fifo" EXIT
 
 echo $fifo
-exec {fifofd}<$fifo
+exec {fifofd}<>$fifo
 
 function init {
     file=$1

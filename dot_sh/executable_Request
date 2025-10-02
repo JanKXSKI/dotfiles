@@ -7,4 +7,4 @@ mkfifo $responseFifo
 trap "rm $responseFifo" EXIT
 
 echo $responseFifo ${@:2} > $fifo
-cat $reponseFifo
+cat $responseFifo
