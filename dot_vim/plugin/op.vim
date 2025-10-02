@@ -1,5 +1,5 @@
-let s:source = "'find . \"(\" -type f -or -type l \")\" -and ! -name *.swp | sed s#^\\./##'"
-let s:preview = "'~/.sh/lspath {} $FZF_PREVIEW_COLUMNS'"
+let s:source = "'find . ! -readable -prune -or \"(\" -type f -or -type l \")\" -and ! -name *.swp | sed s#^\\./##'"
+let s:preview = "'"..$HOME.."/.sh/lspath {} $FZF_PREVIEW_COLUMNS'"
 let s:bindPreviewUpDown = "'--bind', 'ctrl-u:preview-half-page-up', '--bind', 'ctrl-d:preview-half-page-down'"
 let s:bindClearQuery = "'--bind', 'ctrl-l:clear-query'"
 let s:options = "['--preview', "..s:preview..", "..s:bindPreviewUpDown..", "..s:bindClearQuery.."]"
@@ -12,15 +12,22 @@ let s:previewWindow = "'+'..line('w0')"
 let s:options = "['--preview', "..s:preview..", '--preview-window', "..s:previewWindow..", "..s:bindPreviewUpDown.."]"
 exe "command OpGitLog call fzf#run({'source': " s:source ", 'options':" s:options "})"
 
-let g:opGrepServer = job_start("~/.sh/OpGrepServer")
-function! OpenFileFromOpGrepList()
-    let l:fileAndLineNumber = split(ch_evalraw(g:opGrepServer, "getSelectedFileAndLineNumber\n"), ":")
-    exe ":e +"..l:fileAndLineNumber[1].." "..l:fileAndLineNumber[0]
+let g:opGrepServer = job_start([$HOME.."/.sh/OpGrepServer"])
+let g:opGrepFifo = ch_readraw(g:opGrepServer)
+let g:opGrepClient = job_start([$HOME.."/.sh/Client", g:opGrepFifo])
+let g:opGrepRequest = $HOME.."/.sh/Request "..g:opGrepFifo
+function! OpenFileFromOpGrepList(selected)
+    let l:num = ch_evalraw(g:opGrepClient, "getSelectedLineNumber\n")
+    let l:file = split(a:selected, ":")[0]
+    exe ":e +"..l:num.." "..l:file
 endfunction
-let s:opGrepClient = "~/.sh/OpGrepClient "..job_info(g:opGrepServer).process
 let s:source = "'ag -cU <args>'"
-let s:preview = "'tail -f ~/.sh/OpGrepPreviewFile'"
-let s:bindInit = "'--bind', 'focus:execute-silent(''"..s:opGrepClient.." init {1} $FZF_PREVIEW_LINES <args>'')'"
-let s:bindNext = "'--bind', 'ctrl-n:execute-silent(''"..s:opGrepClient.." next'')'"
+let s:preview = "'"..g:opGrepRequest.." preview'"
+let s:bindInit = "'--bind', 'focus:execute-silent("..g:opGrepRequest.." init {1} $FZF_PREVIEW_LINES <args>)+refresh-preview'"
+let s:bindNext = "'--bind', 'ctrl-n:execute-silent("..g:opGrepRequest.." next)+refresh-preview'"
 let s:options = "['-d', ':', '--nth', '1', '--preview', "..s:preview..", "..s:bindInit..", "..s:bindNext.."]"
 exe "command -nargs=+ OpGrep call fzf#run({'source': " s:source ", 'options':" s:options ", 'sink': function('OpenFileFromOpGrepList')})"
+
+function OpGrepWithWordUnderCursor()
+    call feedkeys(":OpGrep "..expand("<cword>"))
+endfunction

@@ -1,5 +1,12 @@
 #! /usr/bin/env bash
-set -x
+. $(dirname $0)/logging.sh
+
+fifo=$(dirname $0)/$$.fifo
+mkfifo $fifo
+trap "rm $fifo" EXIT
+
+echo $fifo
+exec {fifofd}<$fifo
 
 function init {
     file=$1
@@ -12,22 +19,26 @@ function init {
 
 function next {
     curi=$(($curi % $maxi + 1))
-    $(dirname $0)/OpGrepPreview $file $curi $cont $agas
+    rang="rmin = \$1 - $cont/2; rmax = \$1 + $cont/2; if (rmin < 1) { rmax -= (rmin - 1); rmin = 1; }  printf \"-r %d:%d -H %d\", rmin, rmax, \$1"
+    bata=$(ag --numbers $agas $file | awk -F: "FNR == $curi { $rang }")
+    echo "OK"
 }
 
-function close {
-    echo "Loading preview..." > $(dirname $0)/OpGrepPreviewFile
+function preview {
+    bat -n --color=always $bata $file
 }
 
-trap close EXIT
+function getSelectedLineNumber {
+    line=$(ag --numbers $agas $file | awk -F: "FNR == $curi { print \$1 }")
+    echo $line
+}
 
-while true; do
-    read cmd args
-    echo $args
+while read -u $fifofd responseFifo cmd args; do
     case $cmd in
-        "init") init $args ;;
-        "next") next ;;
-        *) echo OpGrepServer does not recognize command $cmd ;;
+        "init") init $args > $responseFifo;;
+        "next") next > $responseFifo;;
+        "preview") preview > $responseFifo;;
+        "getSelectedLineNumber") getSelectedLineNumber > $responseFifo;;
+        *) echo OpGrepServer does not recognize command $cmd > $responseFifo;;
     esac
 done
-

@@ -1,0 +1,12 @@
+#! /usr/bin/env bash
+. $(dirname $0)/logging.sh
+
+fifo=$1
+responseFifo=$(dirname $0)/$$.fifo
+mkfifo $responseFifo
+trap "rm $responseFifo" EXIT
+
+echo $responseFifo ${@:2} > $fifo
+exec {fifofd}<$responseFifo
+while read -u $fifofd response; do echo $response; done;
+
