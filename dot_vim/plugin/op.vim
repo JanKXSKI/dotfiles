@@ -1,4 +1,4 @@
-let s:source = "'find . \"(\" -type f -or -type l \")\" -and ! -name *.swp | sed s#^\\./## 2> /dev/null'"
+let s:source = "'find . \"(\" -type f -or -type l \")\" -and ! -name *.swp | sed s#^\\./##'"
 let s:preview = "'"..$HOME.."/.sh/lspath {} $FZF_PREVIEW_COLUMNS'"
 let s:bindPreviewUpDown = "'--bind', 'ctrl-u:preview-half-page-up', '--bind', 'ctrl-d:preview-half-page-down'"
 let s:bindClearQuery = "'--bind', 'ctrl-l:clear-query'"
@@ -13,11 +13,9 @@ let s:options = "['--preview', "..s:preview..", '--preview-window', "..s:preview
 exe "command OpGitLog call fzf#run({'source': " s:source ", 'options':" s:options "})"
 
 let g:opGrepServer = job_start([$HOME.."/.sh/OpGrepServer"])
-let g:opGrepFifo = ch_readraw(g:opGrepServer)
-let g:opGrepClient = job_start([$HOME.."/.sh/Client", g:opGrepFifo])
-let g:opGrepRequest = $HOME.."/.sh/Request "..g:opGrepFifo
+let g:opGrepRequest = $HOME.."/.sh/Request "..ch_readraw(g:opGrepServer)
 function! OpenFileFromOpGrepList(selected)
-    let l:num = ch_evalraw(g:opGrepClient, "getSelectedLineNumber\n")
+    let l:num = system(g:opGrepRequest.." getSelectedLineNumber")
     let l:file = split(a:selected, ":")[0]
     exe ":e +"..l:num.." "..l:file
 endfunction
