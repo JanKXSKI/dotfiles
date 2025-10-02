@@ -15,6 +15,12 @@ function next {
     $(dirname $0)/OpGrepPreview $file $curi $cont $agas
 }
 
+function close {
+    echo "Loading preview..." > $(dirname $0)/OpGrepPreviewFile
+}
+
+trap close EXIT
+
 while true; do
     read cmd args
     echo $args

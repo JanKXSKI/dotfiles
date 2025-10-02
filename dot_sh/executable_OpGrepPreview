@@ -5,4 +5,4 @@ curi=$2
 cont=$(($3-3))
 
 rang="FNR==$curi { rmin = \$1 - $cont/2; rmax = \$1 + $cont/2; if (rmin < 1) { rmax -= (rmin - 1); rmin = 1; }  printf \"-r %d:%d -H %d\", rmin, rmax, \$1 }"
-ag "${@:4}" $1 | awk -F: "$rang" | xargs bat -n --paging=never --color=always ${file}
+ag "${@:4}" $1 | awk -F: "$rang" | xargs bat -n --paging=never --color=always ${file} > $(dirname $0)/OpGrepPreviewFile

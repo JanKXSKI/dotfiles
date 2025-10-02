@@ -12,11 +12,15 @@ let s:previewWindow = "'+'..line('w0')"
 let s:options = "['--preview', "..s:preview..", '--preview-window', "..s:previewWindow..", "..s:bindPreviewUpDown.."]"
 exe "command OpGitLog call fzf#run({'source': " s:source ", 'options':" s:options "})"
 
-function! OpenFileFromOpGrepList(selected)
-    execute "e" split(a:selected, ":")[0]
+let g:opGrepServer = job_start("~/.sh/OpGrepServer")
+function! OpenFileFromOpGrepList()
+    let l:fileAndLineNumber = split(ch_evalraw(g:opGrepServer, "getSelectedFileAndLineNumber\n"), ":")
+    exe ":e +"..l:fileAndLineNumber[1].." "..l:fileAndLineNumber[0]
 endfunction
+let s:opGrepClient = "~/.sh/OpGrepClient "..job_info(g:opGrepServer).process
 let s:source = "'ag -cU <args>'"
-let s:preview = "'~/.sh/agprev {1} $FZF_PREVIEW_LABEL $FZF_PREVIEW_LINES <args>'"
-let s:bind = "'--bind', 'ctrl-n:transform-preview-label(bash -c ''~/.sh/agwrap {1} $FZF_PREVIEW_LABEL <args>'')+refresh-preview,focus:change-preview-label(1)'"
-let s:options = "['-d', ':', '--nth', '1', '--preview-label', '1', '--preview', "..s:preview..", "..s:bind.."]"
+let s:preview = "'tail -f ~/.sh/OpGrepPreviewFile'"
+let s:bindInit = "'--bind', 'focus:execute-silent(''"..s:opGrepClient.." init {1} $FZF_PREVIEW_LINES <args>'')'"
+let s:bindNext = "'--bind', 'ctrl-n:execute-silent(''"..s:opGrepClient.." next'')'"
+let s:options = "['-d', ':', '--nth', '1', '--preview', "..s:preview..", "..s:bindInit..", "..s:bindNext.."]"
 exe "command -nargs=+ OpGrep call fzf#run({'source': " s:source ", 'options':" s:options ", 'sink': function('OpenFileFromOpGrepList')})"
