@@ -7,11 +7,13 @@ function! AddOrFocusTerminal()
         bd
     endif
     let l:terminals = filter(getbufinfo(), "getbufvar(v:val.bufnr, \"&buftype\") == \"terminal\"")
+    hi normal ctermfg=white guifg=white
     if !empty(l:terminals)
         execute "sb" l:terminals[0].bufnr
     else
         term
     endif
+    hi normal ctermfg=223 ctermbg=236 guifg=#ebdbb2 guibg=#32302f
     wincmd J
 endfunction
 
