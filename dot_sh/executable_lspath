@@ -32,7 +32,7 @@ echo "$fifs" | xargs -n 1 mkfifo
 trap "echo \"$fifs\" | xargs -n 1 rm" EXIT
 
 function filteredLs {
-    (cd $1 && find . -mindepth 1 -maxdepth 1 '!' -name '*.swp' -print | ls -p1)
+    (cd $1 && find . -mindepth 1 -maxdepth 1 '!' -name '*.swp' -print | ls -pA1)
 }
 
 paste <(echo $dirs | xargs -n 1) <(echo $fifs | xargs -n 1) | while read d f; do filteredLs $d > $f; done &
