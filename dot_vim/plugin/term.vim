@@ -7,7 +7,7 @@ function! AddOrFocusTerminal()
         bd
     endif
     let l:terminals = filter(getbufinfo(), "getbufvar(v:val.bufnr, \"&buftype\") == \"terminal\"")
-    hi normal ctermfg=white guifg=white
+    hi normal ctermfg=lightgrey ctermbg=black guifg=lightgrey guibg=black
     if !empty(l:terminals)
         execute "sb" l:terminals[0].bufnr
     else
