@@ -28,7 +28,7 @@ nnoremap <Leader>b :OpGitLog
 nnoremap <Leader>d :let @d=expand('%:p').':'.line('.') <bar> let @f=expand('%:p') <bar> let @l=line('w0').','.line('w$') <CR>
 
 nnoremap <C-P> :call AddOrFocusTerminal() <CR>
-tnoremap <C-P> <C-W>: hide q <CR>
+tnoremap <C-P> <C-W>: hide q <bar> let &laststatus=2 <CR>
 tnoremap ii <C-W>: call HideTerminalAndReplaceWindowWithBuffer() <CR>
 
 set shiftwidth=4 smarttab expandtab
@@ -61,6 +61,7 @@ endtry
 set background=dark
 hi! link StatusLineTerm StatusLine
 hi! link StatusLineTermNC StatusLineNC
+let &laststatus=2
 
 let g:EasyMotion_do_mapping = 0
 map <Leader>f <Plug>(easymotion-bd-f2)

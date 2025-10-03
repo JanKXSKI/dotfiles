@@ -7,7 +7,7 @@ function! AddOrFocusTerminal()
         bd
     endif
     let l:terminals = filter(getbufinfo(), "getbufvar(v:val.bufnr, \"&buftype\") == \"terminal\"")
-    hi normal ctermfg=lightgrey ctermbg=black guifg=lightgrey guibg=black
+    hi normal ctermfg=lightgrey ctermbg=black guifg=lightgrey guibg=#22201f
     if !empty(l:terminals)
         execute "sb" l:terminals[0].bufnr
     else
@@ -15,6 +15,7 @@ function! AddOrFocusTerminal()
     endif
     hi normal ctermfg=223 ctermbg=236 guifg=#ebdbb2 guibg=#32302f
     wincmd J
+    let &laststatus=0
 endfunction
 
 function! HideTerminalAndReplaceWindowWithBuffer()
