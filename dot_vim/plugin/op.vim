@@ -1,15 +1,17 @@
 let g:opFileServer = job_start([$HOME.."/.sh/OpFileServer"])
+let g:opFileRequest = $HOME.."/.sh/Request "..ch_readraw(g:opFileServer)
 let s:source = "'find . -path ./.git -prune -or \"(\" -type f -or -type l \")\" -and ! -name *.swp -print | sed s#^\\./##'"
-let s:preview = "'"..$HOME.."/.sh/lspath {} $FZF_PREVIEW_COLUMNS'"
-let s:bindPreviewUpDown = "'--bind', 'ctrl-u:preview-half-page-up', '--bind', 'ctrl-d:preview-half-page-down'"
+let s:preview = "'"..g:opFileRequest.." preview'"
+let s:bindFocus = "'--bind', 'focus:execute-silent("..g:opFileRequest.." init {} $FZF_PREVIEW_COLUMNS $FZF_PREVIEW_LINES)+refresh-preview'"
 let s:bindClearQuery = "'--bind', 'ctrl-l:clear-query'"
-let s:options = "['--preview', "..s:preview..", "..s:bindPreviewUpDown..", "..s:bindClearQuery.."]"
+let s:options = "['--preview', "..s:preview..", "..s:bindFocus..", "..s:bindClearQuery.."]"
 exe "command OpFile call fzf#run({'source': " s:source ",'options':" s:options ", 'sink': 'e'})"
 
 let s:source = "'git log --format=''%h %an %ar: %s'' -- '..expand('%')"
 let s:previewGit = "'echo {} | awk ''{print $1}'' | xargs -I{} git show {}:'..expand('%')"
 let s:preview = s:previewGit.."..' | bat -n --color=always -l='..split(expand('%:t'), '\\.')[-1]"
 let s:previewWindow = "'+'..line('w0')"
+let s:bindPreviewUpDown = "'--bind', 'ctrl-u:preview-half-page-up', '--bind', 'ctrl-d:preview-half-page-down'"
 let s:options = "['--preview', "..s:preview..", '--preview-window', "..s:previewWindow..", "..s:bindPreviewUpDown.."]"
 exe "command OpGitLog call fzf#run({'source': " s:source ", 'options':" s:options "})"
 
