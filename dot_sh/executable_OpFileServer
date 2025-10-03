@@ -1,0 +1,71 @@
+#! /usr/bin/env bash
+. $(dirname $0)/logging.sh
+
+fifo=$(dirname $0)/$$.fifo
+mkfifo $fifo
+trap "rm $fifo" EXIT
+
+echo $fifo
+exec {fifofd}<>$fifo
+
+function init {
+    path=$1
+    width=$2
+    height=$3
+    echo "OK"
+}
+
+function filteredLs {
+    directory=$1
+    (cd $directory && find . -mindepth 1 -maxdepth 1 '!' -name '*.swp' -print | ls -pA1)
+}
+
+function printLine {
+    $need=$1
+    $inde=$2
+    $sepl=$3
+}
+
+function printToNeedle {
+    need=$1
+    inde="$2"
+    prin='$0==n { s="└╴"; r="╶" } 1 { printf "%-*.*s\n", w, w, i s $0 r; if (s!="│ ") exit }'
+    pret='NF==1 { print } NF==2 { suf=$2; gsub(" ", "─", suf); printf "%s└%s\n", $1, suf }'
+    awk -v n=$need -v s="│ " -v w=$width -v i="$inde" -v r=" " "$prin" | awk -F"└" "$pret"
+}
+
+function printToEnd {
+    need=$1
+    inde="$2"
+    prin='1 { if (p) printf "%-*.*s\n", w, w, i "  " $0 } $0==n { p=1 }'
+    awk -v n=$need -v w=$width -v i="$inde" "$prin"
+}
+
+function previewRec {
+    local dir=$1
+    local inde="${2:-""}"
+    local next;
+    if read next; then
+        filteredLs $dir | printToNeedle $next "$inde"
+        if [[ $next == */ ]]; then
+            previewRec "$dir/${next%/}" "$inde  "
+        fi
+        filteredLs $dir | printToEnd $next "$inde"
+    fi
+}
+
+function preview {
+    if [[ -z $height ]]; then
+        echo "Loading preview..."
+        return
+    fi
+    echo $path | sed 's#/#/\n#g' | previewRec '.'
+}
+
+while read -u $fifofd responseFifo cmd args; do
+    case $cmd in
+        "init") init $args > $responseFifo;;
+        "preview") preview > $responseFifo;;
+        *) echo OpOpenServer does not recognize command $cmd > $responseFifo;;
+    esac
+done
