@@ -1,0 +1,78 @@
+#! /usr/bin/env bash
+
+. $(dirname $0)/logging.sh
+
+path=$1
+width=$2
+height=$3
+
+out1="$$.1.tmp"
+out2="$$.2.tmp"
+touch $out1
+touch $out2
+trap "rm $out1; rm $out2" EXIT
+
+function filteredLs {
+    ls -pA1 $1 | grep -v ".swp$"
+}
+
+function printToNeedle {
+    need=$1
+    inde="$2"
+    if [[ -z $inde ]]; then
+        nop=" "
+        nep=" • "
+    else
+        nop="│ "
+        nep="╰╴• "
+    fi
+    prin='$0==n { s=e } 1 { print i s $0; if (s!=o) exit }'
+    awk -v n=$need -v s="$nop" -v e="$nep" -v o="$nop" -v i="$inde" "$prin" | cut -c 1-$width
+}
+
+function printToEnd {
+    need=$1
+    inde="$2"
+    nop="$3"
+    prin='1 { if (p) print i o $0 } $0==n { p=1 }'
+    awk -v n=$need -v i="$inde" -v o="$nop" "$prin" | cut -c 1-$width
+}
+
+function fillOut {
+    dir=$1
+    printer=$2
+    out=$3
+}
+
+function previewRec {
+    local dir=$1
+    local inde="${2:-""}"
+    if [[ $inde == "" ]]; then
+        local nop=" "
+    else
+        local nop="┆ "
+    fi
+    local next;
+    if read next; then
+        filteredLs $dir | printToNeedle $next "$inde" | cut -c 1-$width >> $out1
+        if [[ $next == */ ]]; then
+            previewRec "$dir/${next%/}" "${inde}${nop}"
+        fi
+        filteredLs $dir | printToEnd $next "$inde" "$nop" | cut -c 1-$width >> $out2
+    fi
+}
+
+echo $path | sed 's#/#/\n#g' | previewRec '.'
+context=$(($height / 2))
+before=$(wc -l < $out1)
+after=$(wc -l < $out2)
+if [[ $context -lt $after ]]; then
+    after=$context
+fi
+if [[ $context -gt $before ]]; then
+    after=$(($after + ($context - $before)))
+else
+    before=$(($context + $height % 2))
+fi
+[[ $before -gt 0 ]] && tail -n $before $out1
+[[ $after -gt 0 ]] && head -n $after $out2

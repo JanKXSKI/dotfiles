@@ -1,0 +1,27 @@
+#! /usr/bin/env bash
+
+tmux has-session 2>/dev/null || exec tmux new $0
+
+. ~/.sh/logging.sh 
+
+exec {opFileServerfd}< <(~/.sh/OpFileServer)
+opFileServerPid=$!
+read opFileServerFifo <&$opFileServerfd
+mkfifo $$.fifo
+trap "rm $$.fifo" EXIT
+tmux split-window -hdIP -p 11 -F "#{pane_index} #{pane_width} #{pane_height}" <&$opFileServerfd >$$.fifo &
+read opFileServerPaneId w h <$$.fifo
+
+color="#2b2a2b"
+tmux set -pt $opFileServerPaneId window-style fg="#bebebe",bg=$color
+tmux set -pt $opFileServerPaneId pane-border-style fg=$color,bg=$color
+tmux set -pt $opFileServerPaneId pane-active-border-style fg=$color,bg=$color
+
+echo "$$.fifo" "init" "." "$w" "$h" > $opFileServerFifo
+read < "$$.fifo"
+echo "$$.fifo" "previewToStdout" > $opFileServerFifo
+read < "$$.fifo"
+
+vim --cmd "let g:codeFileServerFifo=\"$opFileServerFifo\""
+tmux kill-pane -t "$opFileServerPaneId"
+kill $opFileServerPid

@@ -2,7 +2,7 @@ set rtp+=/opt/homebrew/opt/fzf
 
 syntax enable
 
-inoremap ii <Esc>
+inoremap jj <Esc>
 nnoremap <C-H> <C-W>h
 nnoremap <C-S-H> <C-W>h
 nnoremap <C-J> <C-W>j
@@ -28,8 +28,9 @@ nnoremap <Leader>b :OpGitLog
 nnoremap <Leader>d :let @d=expand('%:p').':'.line('.') <bar> let @f=expand('%:p') <bar> let @l=line('w0').','.line('w$') <CR>
 
 nnoremap <C-P> :call AddOrFocusTerminal() <CR>
+inoremap <C-P> <Esc> :call AddOrFocusTerminal() <CR>
 tnoremap <C-P> <C-W>: hide q <bar> let &laststatus=2 <CR>
-tnoremap ii <C-W>: call HideTerminalAndReplaceWindowWithBuffer() <CR>
+tnoremap jj <C-W>: call HideTerminalAndReplaceWindowWithBuffer() <CR>
 
 set shiftwidth=4 smarttab expandtab
 set listchars=eol:¬,tab:»\ ,trail:~,extends:>,precedes:<,space:⸱
@@ -42,6 +43,7 @@ if &term =~ '\%(linux\|tmux\)'
     set termguicolors
     let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
     let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
+    let g:terminal_ansi_colors = ["black", "#fb4934", "#b8bb26", "#d65d0e", "#458588", "#b16286", "#689d6a", "#a89984", "#928374", "#fb4934", "#b8bb26", "#fabd2f", "#83a598", "#d3869b", "#8ec07c", "white"]
 endif
 
 call plug#begin()
@@ -50,7 +52,6 @@ Plug 'easymotion/vim-easymotion'
 call plug#end()
 
 let g:gruvbox_contrast_dark = 'soft'
-let g:terminal_ansi_colors = ["black", "#fb4934", "#b8bb26", "#d65d0e", "#458588", "#b16286", "#689d6a", "#a89984", "#928374", "#fb4934", "#b8bb26", "#fabd2f", "#83a598", "#d3869b", "#8ec07c", "white"]
 
 try
     colorscheme gruvbox
@@ -62,6 +63,7 @@ set background=dark
 hi! link StatusLineTerm StatusLine
 hi! link StatusLineTermNC StatusLineNC
 let &laststatus=2
+hi terminal ctermfg=lightgrey ctermbg=black guifg=lightgrey guibg=#22201f
 
 let g:EasyMotion_do_mapping = 0
 map <Leader>f <Plug>(easymotion-bd-f2)
