@@ -27,7 +27,7 @@ function printToNeedle {
         nep="╰╴• "
     fi
     prin='$0==n { s=e } 1 { print i s $0; if (s!=o) exit }'
-    awk -v n=$need -v s="$nop" -v e="$nep" -v o="$nop" -v i="$inde" "$prin" | cut -c 1-$width
+    awk -v n=$need -v s="$nop" -v e="$nep" -v o="$nop" -v i="$inde" "$prin"
 }
 
 function printToEnd {
@@ -35,7 +35,7 @@ function printToEnd {
     inde="$2"
     nop="$3"
     prin='1 { if (p) print i o $0 } $0==n { p=1 }'
-    awk -v n=$need -v i="$inde" -v o="$nop" "$prin" | cut -c 1-$width
+    awk -v n=$need -v i="$inde" -v o="$nop" "$prin"
 }
 
 function fillOut {
