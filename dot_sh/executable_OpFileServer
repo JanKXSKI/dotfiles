@@ -23,8 +23,6 @@ function setPath {
 function preview {
     if [[ -z $height ]]; then
         echo "Loading preview..."
-    elif [[ -z $path ]]; then
-        $(dirname $0)/explorer $width $height
     else
         $(dirname $0)/explorer $path $width $height
     fi

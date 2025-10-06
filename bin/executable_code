@@ -1,6 +1,9 @@
 #! /usr/bin/env bash
 
-tmux has-session 2>/dev/null || exec tmux new $0
+if ! tmux has-session 2>/dev/null; then
+    tmux -2 new "$0"
+    exit
+fi
 
 . ~/.sh/logging.sh 
 

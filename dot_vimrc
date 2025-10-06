@@ -39,19 +39,12 @@ highlight SpecialKey ctermfg=darkgrey
 highlight NonText ctermfg=darkgrey
 set number
 
-if &term =~ '\%(linux\|tmux\)'
-    set termguicolors
-    let &t_8f = "\<Esc>[38;2;%lu;%lu;%lum"
-    let &t_8b = "\<Esc>[48;2;%lu;%lu;%lum"
-    let g:terminal_ansi_colors = ["black", "#fb4934", "#b8bb26", "#d65d0e", "#458588", "#b16286", "#689d6a", "#a89984", "#928374", "#fb4934", "#b8bb26", "#fabd2f", "#83a598", "#d3869b", "#8ec07c", "white"]
-endif
+let &t_Co=256
 
 call plug#begin()
 Plug 'morhetz/gruvbox'
 Plug 'easymotion/vim-easymotion'
 call plug#end()
-
-let g:gruvbox_contrast_dark = 'soft'
 
 try
     colorscheme gruvbox
