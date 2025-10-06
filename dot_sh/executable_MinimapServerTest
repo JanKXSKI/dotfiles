@@ -1,0 +1,9 @@
+#! /usr/bin/env bash
+
+exec {fd}< <(./MinimapServer)
+read -u $fd fifo
+./Request $fifo init MinimapServer 20 30
+./Request $fifo range 12 40
+./Request $fifo cursor 23
+./Request $fifo previewToStdout
+cat <&$fd

@@ -1,0 +1,74 @@
+#! /usr/bin/env bash
+rund="$(dirname $0)/run"
+mkdir -p "$rund"
+. $(dirname $0)/logging.sh "$rund"
+
+fifo=$rund/$$.fifo
+mkfifo $fifo
+trap "rm $fifo" EXIT
+
+echo $fifo
+exec {fifofd}<>$fifo
+
+function storeMap {
+    lines=$(wc -l <$path)
+    scale=$(bc -le "min(1, $(($height * 4)) / $lines)")
+    code-minimap --padding $width -V $scale $path > "$rund/$$.tmp"
+    trap "rm '$rund/$$.tmp'" EXIT
+}
+
+function init {
+    path=$1
+    width=$2
+    height=$3
+    storeMap
+    echo "OK"
+}
+
+function setPath {
+    path=$1
+    storeMap
+    echo "OK"
+}
+
+function range {
+    rangf=$1
+    rangt=$2
+    echo "OK"
+}
+
+function cursor { 
+    cursor=$1
+    echo "OK"
+}
+
+function preview {
+    if [[ -z $height ]]; then
+        echo "Loading preview..."
+        return
+    fi
+    rang='NR>=int(((f-1)/4)*s)+1 && NR<=int(((t-1)/4)*s)+1 { printf "\033[48;5;236m" }'
+    curs='NR==int(((c-1)/4)*s)+1 { printf "\033[38;5;215m\033[48;5;130m" }'
+    prin='1 { printf $0 "\033[0m\n" }'
+    vs="-v s=$scale -v f=${rangf:-1} -v t=${rangt:-1} -v c=${cursor:-1}"
+    cat "$rund/$$.tmp" | cut -c 1-$width | awk $vs "$rang $curs $prin"
+}
+
+function previewToStdout {
+    responseFifo=$1
+    tput clear
+    preview
+    echo "OK" > $responseFifo
+}
+
+while read -u $fifofd responseFifo cmd args; do
+    case $cmd in
+        "init") init $args > $responseFifo;;
+        "setPath") setPath $args > $responseFifo;;
+        "range") range $args > $responseFifo;;
+        "cursor") cursor $args > $responseFifo;;
+        "preview") preview > $responseFifo;;
+        "previewToStdout") previewToStdout $responseFifo;;
+        *) echo OpOpenServer does not recognize command $cmd > $responseFifo;;
+    esac
+done
