@@ -1,8 +1,10 @@
 #! /usr/bin/env bash
-. $(dirname $0)/logging.sh
+rund=$(dirname $0)/run
+mkdir -p "$rund"
+. $(dirname $0)/logging.sh "$rund"
 
 fifo=$1
-responseFifo=$(dirname $0)/$$.fifo
+responseFifo="$rund/$$.fifo"
 mkfifo $responseFifo
 trap "rm $responseFifo" EXIT
 

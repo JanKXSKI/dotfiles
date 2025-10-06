@@ -1,12 +1,13 @@
 #! /usr/bin/env bash
-. $(dirname $0)/logging.sh
+rund=$(dirname $0)/run
+mkdir -p $rund
+. $(dirname $0)/logging.sh $rund
 
-fifo=$(dirname $0)/$$.fifo
-mkfifo $fifo
-trap "rm $fifo" EXIT
+mkfifo $rund/$$.fifo
+trap "rm $rund/$$.fifo" EXIT
 
-echo $fifo
-exec {fifofd}<>$fifo
+echo $rund/$$.fifo
+exec {fifofd}<>$rund/$$.fifo
 
 function init {
     file=$1

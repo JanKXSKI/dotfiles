@@ -1,13 +1,15 @@
 #! /usr/bin/env bash
 
-. $(dirname $0)/logging.sh
+rund=$(dirname $0)/run
+mkdir -p "$rund"
+. $(dirname $0)/logging.sh "$rund"
 
 path=$1
 width=$2
 height=$3
 
-out1="$$.1.tmp"
-out2="$$.2.tmp"
+out1="$rund/$$.1.tmp"
+out2="$rund/$$.2.tmp"
 touch $out1
 touch $out2
 trap "rm $out1; rm $out2" EXIT
