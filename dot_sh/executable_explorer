@@ -24,7 +24,7 @@ function printToNeedle {
         nep=" • "
     else
         nop="│ "
-        nep="╰╴• "
+        nep="╰─╴• "
     fi
     prin='$0==n { s=e } 1 { print i s $0; if (s!=o) exit }'
     awk -v n=$need -v s="$nop" -v e="$nep" -v o="$nop" -v i="$inde" "$prin"
@@ -50,7 +50,7 @@ function previewRec {
     if [[ $inde == "" ]]; then
         local nop=" "
     else
-        local nop="┆ "
+        local nop="┆  "
     fi
     local next;
     if read next; then
