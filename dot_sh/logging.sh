@@ -1,4 +1,5 @@
 logdir="$1"
-parent="$(basename "$(ps -o comm= $PPID)")"
+parentProcess=$(ps -o comm= $PPID)
+parent="$(basename "${parentProcess#-}")"
 exec {BASH_XTRACEFD}>"$logdir/log-${0##*/}.$parent.$$.log"
 set -x
