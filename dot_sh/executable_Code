@@ -17,7 +17,7 @@ mkfifo "$rund/$$.fifo"
 exec {opFileServerfd}< <(~/.sh/OpFileServer)
 opFileServerPid=$!
 read opFileServerFifo <&$opFileServerfd
-tmux split-window -hbdIP -l 20 -F "#{pane_index} #{pane_width} #{pane_height}" <&$opFileServerfd >"$rund/$$.fifo" &
+tmux split-window -hdIP -l 20 -F "#{pane_index} #{pane_width} #{pane_height}" <&$opFileServerfd >"$rund/$$.fifo" &
 read opFileServerPaneId w h <"$rund/$$.fifo"
 
 echo "$rund/$$.fifo" "init" "." "$w" "$h" > $opFileServerFifo
@@ -28,7 +28,6 @@ read < "$rund/$$.fifo"
 exec {minimapServerfd}< <(~/.sh/MinimapServer)
 minimapServerPid=$!
 read minimapServerFifo <&$minimapServerfd
-
 tmux split-window -hdIP -l 20 -F "#{pane_index} #{pane_width} #{pane_height}" <&$minimapServerfd >"$rund/$$.fifo" &
 read minimapServerPaneId w h <"$rund/$$.fifo"
 
@@ -46,4 +45,4 @@ trap cleanup EXIT
 
 sessionVim="$(dirname $sess)/vim-sessions/$(pwd | sed 's#/#ESCAPED_SLASH#g').vim"
 [[ -e $sessionVim ]] && sessionOption="-S $sessionVim"
-vim $sessionOption --cmd "let g:codeSessionsFile=\"$sess\"" --cmd "let g:codeFileServerFifo=\"$opFileServerFifo\""
+vim $sessionOption --cmd "let g:codeSessionsFile=\"$sess\"" --cmd "let g:codeFileServerFifo=\"$opFileServerFifo\"" --cmd "let g:codeMinimapServerFifo=\"$minimapServerFifo\""

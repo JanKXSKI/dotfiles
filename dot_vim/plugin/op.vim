@@ -2,7 +2,7 @@ let g:opFileServer = job_start([$HOME.."/.sh/OpFileServer"])
 let g:opFileRequest = $HOME.."/.sh/Request "..ch_readraw(g:opFileServer)
 function! OpFileSink(selected)
     if exists("g:codeFileServerFifo")
-        call CodeFileServerRefresh(a:selected)
+        call CodeOnFileOpened(a:selected)
     endif
     exe "e" a:selected
 endfunction
@@ -23,9 +23,12 @@ exe "command OpGitLog call fzf#run(fzf#wrap({'source': " s:source ", 'options':"
 
 let g:opGrepServer = job_start([$HOME.."/.sh/OpGrepServer"])
 let g:opGrepRequest = $HOME.."/.sh/Request "..ch_readraw(g:opGrepServer)
-function! OpenFileFromOpGrepList(selected)
+function! OpGrepSink(selected)
     let l:num = system(g:opGrepRequest.." getSelectedLineNumber")
     let l:file = split(a:selected, ":")[0]
+    if exists("g:codeFileServerFifo")
+        call CodeOnFileOpened(l:file)
+    endif
     exe ":e +"..l:num.." "..l:file
 endfunction
 let s:source = "'ag -cU <args>'"
@@ -33,7 +36,7 @@ let s:preview = "'"..g:opGrepRequest.." preview'"
 let s:bindInit = "'--bind', 'focus:execute-silent("..g:opGrepRequest.." init {1} $FZF_PREVIEW_LINES <args>)+refresh-preview'"
 let s:bindNext = "'--bind', 'ctrl-n:execute-silent("..g:opGrepRequest.." next)+refresh-preview'"
 let s:options = "['-d', ':', '--nth', '1', '--preview', "..s:preview..", "..s:bindInit..", "..s:bindNext.."]"
-exe "command -nargs=+ OpGrep call fzf#run(fzf#wrap({'source': " s:source ", 'options':" s:options ", 'sink': function('OpenFileFromOpGrepList')}))"
+exe "command -nargs=+ OpGrep call fzf#run(fzf#wrap({'source': " s:source ", 'options':" s:options ", 'sink': function('OpGrepSink')}))"
 
 function OpGrepWithWordUnderCursor()
     call feedkeys(":OpGrep "..expand("<cword>"))

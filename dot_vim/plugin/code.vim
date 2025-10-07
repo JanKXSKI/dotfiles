@@ -2,12 +2,18 @@ if !exists("g:codeFileServerFifo")
     finish
 endif
 
-let g:codeFileRequest = $HOME.."/.sh/Request "..g:codeFileServerFifo
+let g:codeFileServerRequest = $HOME.."/.sh/Request "..g:codeFileServerFifo
+let g:codeMinimapServerRequest = $HOME.."/.sh/Request "..g:codeMinimapServerFifo
 
-function! CodeFileServerRefresh(newPath)
-    let l:path = empty(a:newPath) ? "." : shellescape(a:newPath)
-    call system(g:codeFileRequest.." setPath "..l:path)
-    call system(g:codeFileRequest.." previewToStdout")
+function! CodeOnFileOpened(newPath)
+    if empty(a:newPath)
+        return
+    endif
+    let l:path = shellescape(a:newPath)
+    call system(g:codeFileServerRequest.." setPath "..l:path)
+    call system(g:codeFileServerRequest.." previewToStdout")
+    call system(g:codeMinimapServerRequest.." setPath "..l:path)
+    call system(g:codeMinimapServerRequest.." previewToStdout")
 endfunction
 
-autocmd SessionLoadPost * call CodeFileServerRefresh(expand("%"))
+autocmd SessionLoadPost * call CodeOnFileOpened(expand("%"))

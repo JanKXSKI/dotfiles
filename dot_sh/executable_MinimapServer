@@ -12,8 +12,8 @@ exec {fifofd}<>$fifo
 
 function storeMap {
     lines=$(wc -l <$path)
-    scale=$(bc -le "min(1, $(($height * 4)) / $lines)")
-    code-minimap --padding $width -V $scale $path > "$rund/$$.tmp"
+    scale=$(echo "s = $(($height * 4)) / $lines; if (s > 1) s = 1; s" | bc -l)
+    code-minimap --padding $width -V $scale -H 0.3 $path > "$rund/$$.tmp"
     trap "rm '$rund/$$.tmp'" EXIT
 }
 
@@ -45,8 +45,8 @@ function preview {
         echo "Loading preview..."
         return
     fi
-    rang='NR>=int(((f-1)/4)*s)+1 && NR<=int(((t-1)/4)*s)+1 { printf "\033[48;5;236m" }'
-    curs='NR==int(((c-1)/4)*s)+1 { printf "\033[38;5;215m\033[48;5;130m" }'
+    rang='NR>=int(((f-1)/4)*s)+1 && NR<=int(((t-1)/4)*s)+1 { printf "\033[48;5;234m" }'
+    curs='NR==int(((c-1)/4)*s)+1 { printf "\033[38;5;215m\033[48;5;237m" }'
     prin='1 { printf $0 "\033[0m\n" }'
     vs="-v s=$scale -v f=${rangf:-1} -v t=${rangt:-1} -v c=${cursor:-1}"
     cat "$rund/$$.tmp" | cut -c 1-$width | awk $vs "$rang $curs $prin"
