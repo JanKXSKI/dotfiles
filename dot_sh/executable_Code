@@ -32,10 +32,9 @@ read < "$rund/$$.fifo"
 echo "$rund/$$.fifo" "previewToStdout" > $opFileServerFifo
 read < "$rund/$$.fifo"
 
-exec {minimapServerfd}< <(~/.sh/MinimapServer)
-read minimapServerSocket <&$minimapServerfd
-tmux split-window -hdIP -l 20 -F "#{pane_index} #{pane_width} #{pane_height}" <&$minimapServerfd >"$rund/$$.fifo" &
+tmux split-window -hdP -l 20 -F "#{pane_index} #{pane_width} #{pane_height}" "~/.sh/MinimapServer" >"$rund/$$.fifo" &
 read minimapServerPaneId w h <"$rund/$$.fifo"
+while ! read minimapServerSocket; do sleep 0.5s; done <(tmux capture-pane -pJt $minimapServerPaneId)
 
 function cleanup {
     kill $opFileServerPid

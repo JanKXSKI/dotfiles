@@ -14,5 +14,5 @@ function request {
     echo "cursor 23"
     echo "preview"
 }
-request | nc -U $socket
+request | nc -vU "$socket" || (echo "failed to connect"; exit)
 cat <&$fd

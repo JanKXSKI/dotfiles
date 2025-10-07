@@ -1,12 +1,11 @@
 #! /usr/bin/env bash
-rund="$(dirname $0)/run"
+rund="$(realpath $(dirname $0))/run"
 mkdir -p "$rund"
 . ~/.sh/logging.sh "$rund"
 
 socket=$rund/$$.socket
 touch "$rund/$$.tmp"
 trap "rm $socket; rm '$rund/$$.tmp'" EXIT
-echo $socket
 
 function storeMap {
     lines=$(wc -l <$path)
@@ -38,7 +37,7 @@ function preview {
         echo "Loading preview..."
         return
     fi
-    rang='NR>=int(((f-1)/4)*s)+1 && NR<=int(((t-1)/4)*s)+1 { printf "\033[48;5;234m" }'
+    rang='NR>=int(((f-1)/4)*s)+1 && NR<=int(((t-1)/4)*s)+1 { printf "\033[48;5;235m" }'
     curs='NR==int(((c-1)/4)*s)+1 { printf "\033[38;5;215m\033[48;5;237m" }'
     prin='1 { printf $0 "\033[0m\n" }'
     vs="-v s=$scale -v f=${rangf:-1} -v t=${rangt:-1} -v c=${cursor:-1}"
@@ -47,6 +46,7 @@ function preview {
 }
 
 function mainLoop {
+    echo "$socket"
     while read cmd args; do
         case $cmd in
             "init") init $args ;;
