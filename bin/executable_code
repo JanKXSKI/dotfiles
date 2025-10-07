@@ -7,11 +7,13 @@ mkdir -p "$rund"
 sessionLocation="${1:-$(pwd)}"
 
 function launch {
-    sesl="$(realpath $1)"
-    remote="${sesl%:*}"
+    remote="${$1%:*}"
+    [[ "$remote" == "$1" ]] && remote=""
+    folder="$(realpath ${1#*:})"
+    sesl="${remote:+$remote:}$folder"
     ~/.sh/WriteLeastRecentlyUsed "$rund/sessions" "$sesl"
-    if [[ "$sesl" != "$remote" ]]; then
-        rdir="bin/sessions-from/$remote"
+    if [[ -n $remote ]]; then
+        rdir="bin/sessions-from/${remote}"
         sess="$remote:$rdir/sessions"
         ssh "$remote" "mkdir -p '$rdir'"
         scp "$rund/sessions" "$sess"
