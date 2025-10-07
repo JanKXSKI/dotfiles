@@ -26,7 +26,7 @@ function preview {
     if [[ -z $height ]]; then
         echo "Loading preview..."
     else
-        $(dirname $0)/explorer $path $width $height
+        $(dirname $0)/Explorer $path $width $height
     fi
 }
 

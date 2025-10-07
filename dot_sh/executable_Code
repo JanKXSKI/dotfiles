@@ -1,0 +1,36 @@
+#! /usr/bin/env bash
+
+rund=$(dirname $0)/run
+mkdir -p "$rund"
+. ~/.sh/logging.sh "$rund"
+
+if ! tmux has-session 2>/dev/null; then
+    tmux -2 new "$0 $*"
+    exit
+fi
+
+cd $1
+sess=$2
+
+exec {opFileServerfd}< <(~/.sh/OpFileServer)
+opFileServerPid=$!
+read opFileServerFifo <&$opFileServerfd
+mkfifo "$rund/$$.fifo"
+trap "rm '$rund/$$.fifo'" EXIT
+tmux split-window -hdIP -p 11 -F "#{pane_index} #{pane_width} #{pane_height}" <&$opFileServerfd >"$rund/$$.fifo" &
+read opFileServerPaneId w h <"$rund/$$.fifo"
+
+color="#202020"
+tmux set -pt $opFileServerPaneId window-style fg="#bebebe",bg=$color
+tmux set -pt $opFileServerPaneId pane-border-style fg=$color,bg=$color
+tmux set -pt $opFileServerPaneId pane-active-border-style fg=$color,bg=$color
+
+echo "$rund/$$.fifo" "init" "." "$w" "$h" > $opFileServerFifo
+read < "$rund/$$.fifo"
+echo "$rund/$$.fifo" "previewToStdout" > $opFileServerFifo
+read < "$rund/$$.fifo"
+
+vim --cmd "let g:codeSessionsFile=\"$sess\"" --cmd "let g:codeFileServerFifo=\"$opFileServerFifo\""
+
+tmux kill-pane -t "$opFileServerPaneId"
+kill $opFileServerPid
