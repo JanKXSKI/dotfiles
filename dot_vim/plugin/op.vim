@@ -50,6 +50,7 @@ function! OpenCodeSession(selected)
         echoe "Cannot leave here, buffer has changes."
     catch /No modified buffer/
         call system("~/.sh/WriteLeastRecentlyUsed "..g:codeSessionsFile.." "..a:selected)
+        mksession!
         qa
     endtry
 endfunction
