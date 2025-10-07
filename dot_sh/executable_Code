@@ -1,6 +1,6 @@
 #! /usr/bin/env bash
 
-rund=$(dirname $0)/run
+rund=$(realpath $(dirname $0))/run
 mkdir -p "$rund"
 . ~/.sh/logging.sh "$rund"
 
@@ -32,9 +32,10 @@ read < "$rund/$$.fifo"
 echo "$rund/$$.fifo" "previewToStdout" > $opFileServerFifo
 read < "$rund/$$.fifo"
 
-tmux split-window -hdP -l 20 -F "#{pane_index} #{pane_width} #{pane_height}" "~/.sh/MinimapServer" >"$rund/$$.fifo" &
-read minimapServerPaneId w h <"$rund/$$.fifo"
-while ! read minimapServerSocket; do sleep 0.5s; done <(tmux capture-pane -pJt $minimapServerPaneId)
+tmux split-window -hdP -l 20 -F "#{pane_pid} #{pane_width} #{pane_height}" "~/.sh/MinimapServer" >"$rund/$$.fifo" &
+read minimapServerPid minimapWidth minimapHeight <"$rund/$$.fifo"
+minimapServerSocket="$rund/$minimapServerPid.socket"
+while ! [[ -e "$minimapServerSocket" ]]; do sleep 0.1s; done 
 
 function cleanup {
     kill $opFileServerPid
@@ -48,4 +49,6 @@ sessionVim="$(dirname $sess)/vim-sessions/$(pwd | sed 's#/#ESCAPED_SLASH#g').vim
 vim $sessionOption \
     --cmd "let g:codeSessionsFile=\"$sess\""\
     --cmd "let g:codeFileServerFifo=\"$opFileServerFifo\""\
+    --cmd "let g:codeMinimapWidth=\"$minimapWidth\""\
+    --cmd "let g:codeMinimapHeight=\"$minimapHeight\""\
     --cmd "let g:codeMinimapServerSocket=\"$minimapServerSocket\""

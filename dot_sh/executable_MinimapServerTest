@@ -6,7 +6,8 @@ mkdir -p "$rund"
 . ~/.sh/logging.sh "$rund"
 
 exec {fd}< <(./MinimapServer)
-read -u $fd socket
+socket="$rund/$!.socket"
+while [[ ! -e $socket ]]; do sleep 0.1s; done
 function request {
     echo "init 20 30"
     echo "setPath MinimapServer"

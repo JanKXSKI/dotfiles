@@ -1,5 +1,5 @@
 #! /usr/bin/env bash
-rund="$(realpath $(dirname $0))/run"
+rund="$(dirname $0)/run"
 mkdir -p "$rund"
 . ~/.sh/logging.sh "$rund"
 
@@ -46,7 +46,6 @@ function preview {
 }
 
 function mainLoop {
-    echo "$socket"
     while read cmd args; do
         case $cmd in
             "init") init $args ;;
