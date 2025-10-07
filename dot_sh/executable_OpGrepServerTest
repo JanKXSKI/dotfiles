@@ -1,0 +1,8 @@
+#! /usr/bin/env bash
+
+rm -f run/log-*
+exec {fd}< <(./OpGrepServer)
+read -u $fd fifo
+./Request $fifo init "OpGrepServer" 10 "function init"
+./Request $fifo preview
+./Request $fifo shutdown
