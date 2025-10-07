@@ -1,10 +1,18 @@
 #! /usr/bin/env bash
+rm run/log-*
+
+rund="$(dirname $0)/run"
+mkdir -p "$rund"
+. ~/.sh/logging.sh "$rund"
 
 exec {fd}< <(./MinimapServer)
-read -u $fd fifo
-./Request $fifo init 20 30
-./Request $fifo setPath MinimapServer 
-./Request $fifo range 12 40
-./Request $fifo cursor 23
-./Request $fifo previewToStdout
+read -u $fd socket
+function request {
+    echo "init 20 30"
+    echo "setPath MinimapServer"
+    echo "range 12 40"
+    echo "cursor 23"
+    echo "preview"
+}
+request | nc -U $socket
 cat <&$fd

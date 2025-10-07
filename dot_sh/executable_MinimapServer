@@ -3,41 +3,34 @@ rund="$(dirname $0)/run"
 mkdir -p "$rund"
 . ~/.sh/logging.sh "$rund"
 
-fifo=$rund/$$.fifo
-mkfifo $fifo
-trap "rm $fifo" EXIT
-
-echo $fifo
-exec {fifofd}<>$fifo
+socket=$rund/$$.socket
+touch "$rund/$$.tmp"
+trap "rm $socket; rm '$rund/$$.tmp'" EXIT
+echo $socket
 
 function storeMap {
     lines=$(wc -l <$path)
     scale=$(echo "s = $(($height * 4)) / $lines; if (s > 1) s = 1; s" | bc -l)
     code-minimap --padding $width -V $scale -H 0.3 $path > "$rund/$$.tmp"
-    trap "rm '$rund/$$.tmp'" EXIT
 }
 
 function init {
     width=$1
     height=$2
-    echo "OK"
 }
 
 function setPath {
     path=$1
     storeMap
-    echo "OK"
 }
 
 function range {
     rangf=$1
     rangt=$2
-    echo "OK"
 }
 
 function cursor { 
     cursor=$1
-    echo "OK"
 }
 
 function preview {
@@ -49,24 +42,21 @@ function preview {
     curs='NR==int(((c-1)/4)*s)+1 { printf "\033[38;5;215m\033[48;5;237m" }'
     prin='1 { printf $0 "\033[0m\n" }'
     vs="-v s=$scale -v f=${rangf:-1} -v t=${rangt:-1} -v c=${cursor:-1}"
+    tput clear
     cat "$rund/$$.tmp" | cut -c 1-$width | awk $vs "$rang $curs $prin"
 }
 
-function previewToStdout {
-    responseFifo=$1
-    tput clear
-    preview
-    echo "OK" > $responseFifo
+function mainLoop {
+    while read cmd args; do
+        case $cmd in
+            "init") init $args ;;
+            "setPath") setPath $args ;;
+            "range") range $args ;;
+            "cursor") cursor $args ;;
+            "preview") preview ;;
+            *) echo OpOpenServer does not recognize command $cmd ;;
+        esac
+    done
 }
 
-while read -u $fifofd responseFifo cmd args; do
-    case $cmd in
-        "init") init $args > $responseFifo;;
-        "setPath") setPath $args > $responseFifo;;
-        "range") range $args > $responseFifo;;
-        "cursor") cursor $args > $responseFifo;;
-        "preview") preview > $responseFifo;;
-        "previewToStdout") previewToStdout $responseFifo;;
-        *) echo OpOpenServer does not recognize command $cmd > $responseFifo;;
-    esac
-done
+nc -Ul $socket | mainLoop
