@@ -1,0 +1,13 @@
+#! /usr/bin/env bash
+
+rund=$(dirname $0)/run
+mkdir -p "$rund"
+. ~/.sh/logging.sh "$rund"
+
+file="$1"
+line="$2"
+
+cp "$file" "$file.last"
+cat "$file.last" | grep -v "^$line\$" > "$file"
+echo "$line" >> "$file"
+rm "$file.last"
