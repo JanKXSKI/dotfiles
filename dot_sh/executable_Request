@@ -1,12 +1,12 @@
 #! /usr/bin/env bash
 rund=$(dirname $0)/run
 mkdir -p "$rund"
-. $(dirname $0)/logging.sh "$rund"
 
 fifo=$1
 responseFifo="$rund/$$.fifo"
 mkfifo $responseFifo
 trap "rm $responseFifo" EXIT
 
-echo $responseFifo ${@:2} > $fifo
+printf "%q " $responseFifo "${@:2}" > $fifo
+printf "\n" > $fifo
 cat $responseFifo
