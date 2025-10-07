@@ -43,6 +43,7 @@ set number
 let &t_Co=256
 
 call plug#begin()
+Plug 'junegunn/fzf'
 Plug 'morhetz/gruvbox'
 Plug 'easymotion/vim-easymotion'
 call plug#end()

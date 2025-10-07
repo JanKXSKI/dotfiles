@@ -9,6 +9,13 @@ if ! tmux has-session 2>/dev/null; then
     exit
 fi
 
+if [[ $1 != ":here:" ]]; then
+    tmux -2 new-window "$0 ':here:' $*"
+    exit
+else
+    shift
+fi
+
 cd $1
 sess=$2
 
@@ -35,11 +42,10 @@ echo "$rund/$$.fifo" "init" "$w" "$h" > $minimapServerFifo
 read < "$rund/$$.fifo"
 
 function cleanup {
-    tmux kill-pane -t $minimapServerPaneId
-    tmux kill-pane -t $opFileServerPaneId 
     kill $opFileServerPid
     kill $minimapServerPid
     rm "$rund/$$.fifo"
+    tmux kill-window
 }
 trap cleanup EXIT
 
