@@ -10,9 +10,11 @@ height=$3
 
 out1="$rund/$$.1.tmp"
 out2="$rund/$$.2.tmp"
+out3="$rund/$$.3.tmp"
 touch $out1
 touch $out2
-trap "rm $out1; rm $out2" EXIT
+touch $out3
+trap "rm $out1; rm $out2; rm $out3" EXIT
 
 function filteredLs {
     ls -pA1 $1 | grep -v -e ".swp$" -e "^Session.vim$"
@@ -28,8 +30,8 @@ function printToNeedle {
         nop="│ "
         nep="╰•"
     fi
-    prin='$0==n { s=e } 1 { i=sprintf("%*.*s", l+2, l+2, s); print i $0; if (s!=o) exit }'
-    awk -v n=$need -v s="$nop" -v e="$nep" -v o="$nop" -v l=$levl "$prin"
+    prin='$0==n { s=e; h=sprintf("%*s",w,"") } 1 { i=sprintf("%*.*s", l+2, l+2, s); print i $0 h; if (s!=o) exit }'
+    awk -v n=$need -v s="$nop" -v e="$nep" -v o="$nop" -v l=$levl -v w=$width "$prin"
 }
 
 function printToEnd {
@@ -50,9 +52,13 @@ function previewRec {
     local levl="${2:-0}"
     local next;
     if read next; then
-        filteredLs $dir | printToNeedle $next $levl | cut -c 1-$width >> $out1
+        filteredLs $dir | printToNeedle $next $levl | cut -c 1-$width > $out3
         if [[ $next == */ ]]; then
+            cat $out3 >> $out1
             previewRec "$dir/${next%/}" $(($levl + 1)) 
+        else
+            cat $out3 | sed '$d' >> $out1
+            tail -n 1 $out3 | awk '{ print "\033[48;5;237m" $0 "\033[0m" }' >> $out1
         fi
         filteredLs $dir | printToEnd $next $levl | cut -c 1-$width >> $out2
     fi
