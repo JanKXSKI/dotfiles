@@ -16,6 +16,7 @@ function launch {
         rdir=$(ssh "$remote" "mkdir -p '$rdir' && realpath '$rdir'")
         sess="$rdir/sessions"
         scp "$rund/sessions" "$remote:$sess"
+        ssh -t "chezmoi update"
         ssh -t "$remote" "~/.sh/Code '$folder' '$sess'"
         scp "$remote:$sess" "$rund/sessions"
     else
