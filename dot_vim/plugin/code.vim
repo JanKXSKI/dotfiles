@@ -9,3 +9,5 @@ function! CodeFileServerRefresh(newPath)
     call system(g:codeFileRequest.." setPath "..l:path)
     call system(g:codeFileRequest.." previewToStdout")
 endfunction
+
+autocmd SessionLoadPost * call CodeFileServerRefresh(expand("%"))

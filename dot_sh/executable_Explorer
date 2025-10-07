@@ -15,7 +15,7 @@ touch $out2
 trap "rm $out1; rm $out2" EXIT
 
 function filteredLs {
-    ls -pA1 $1 | grep -v ".swp$"
+    ls -pA1 $1 | grep -v -e ".swp$" -e "^Session.vim$"
 }
 
 function printToNeedle {
