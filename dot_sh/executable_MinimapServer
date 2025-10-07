@@ -18,10 +18,8 @@ function storeMap {
 }
 
 function init {
-    path=$1
-    width=$2
-    height=$3
-    storeMap
+    width=$1
+    height=$2
     echo "OK"
 }
 
