@@ -25,7 +25,8 @@ read < "$rund/$$.fifo"
 echo "$rund/$$.fifo" "previewToStdout" > $opFileServerFifo
 read < "$rund/$$.fifo"
 
-[[ -e Session.vim ]] && sessionOption="-S Session.vim"
+sessionVim="$(dirname $sess)/vim-sessions/$(pwd | sed 's#/#ESCAPED_SLASH#g').vim"
+[[ -e $sessionVim ]] && sessionOption="-S $sessionVim"
 vim $sessionOption --cmd "let g:codeSessionsFile=\"$sess\"" --cmd "let g:codeFileServerFifo=\"$opFileServerFifo\""
 
 tmux kill-pane -t "$opFileServerPaneId"

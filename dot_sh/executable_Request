@@ -10,4 +10,4 @@ trap "rm $responseFifo" EXIT
 
 printf "%q " $responseFifo "${@:2}" > $fifo
 printf "\n" > $fifo
-cat $responseFifo
+timeout 1 cat $responseFifo || echo "Request timed out..."

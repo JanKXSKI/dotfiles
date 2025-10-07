@@ -39,20 +39,20 @@ function OpGrepWithWordUnderCursor()
     call feedkeys(":OpGrep "..expand("<cword>"))
 endfunction
 
-function! OpenCodeSession(selected)
-    if !exists("g:codeSessionsFile")
-        echom "Vim not opened with code."
-        return
-    endif
-    try
-        sbm
-        wincmd J
-        echoe "Cannot leave here, buffer has changes."
-    catch /No modified buffer/
-        call system("~/.sh/WriteLeastRecentlyUsed "..g:codeSessionsFile.." "..a:selected)
-        mksession!
-        qa
-    endtry
-endfunction
-let s:source = "'cat ~/bin/run/sessions'"
-exe "command OpSession call fzf#run(fzf#wrap({'source': " s:source ", 'sink': function('OpenCodeSession')}))"
+if exists("g:codeSessionsFile")
+    function! OpenCodeSession(selected)
+        try
+            sbm
+            wincmd J
+            echoe "Cannot leave here, buffer has changes."
+        catch /No modified buffer/
+            call system("~/.sh/WriteLeastRecentlyUsed "..g:codeSessionsFile.." "..a:selected)
+            let l:vimSessionsDir = fnamemodify(g:codeSessionsFile, ":p:h").."/vim-sessions"
+            call mkdir(l:vimSessionsDir, "p")
+            exe "mksession! "..l:vimSessionsDir.."/"..fnamemodify(getcwd(), ":gs#/#ESCAPED_SLASH#")..".vim"
+            qa
+        endtry
+    endfunction
+    let s:source = "'cat "..g:codeSessionsFile.."'"
+    exe "command OpSession call fzf#run(fzf#wrap({'source': " s:source ", 'sink': function('OpenCodeSession')}))"
+endif
