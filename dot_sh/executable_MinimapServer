@@ -28,21 +28,16 @@ function range {
     rangt=$2
 }
 
-function cursor { 
-    cursor=$1
-}
-
 function preview {
     if [[ -z $height ]]; then
         echo "Loading preview..."
         return
     fi
-    rang='NR>=int(((f-1)/4)*s)+1 && NR<=int(((t-1)/4)*s)+1 { printf "\033[48;5;235m" }'
-    curs='NR==int(((c-1)/4)*s)+1 { printf "\033[38;5;215m\033[48;5;237m" }'
+    rang='NR>=int(((f-1)/4)*s)+1 && NR<=int(((t-1)/4)*s)+1 { printf "\033[48;5;237m" }'
     prin='1 { printf $0 "\033[0m\n" }'
-    vs="-v s=$scale -v f=${rangf:-1} -v t=${rangt:-1} -v c=${cursor:-1}"
+    vs="-v s=$scale -v f=${rangf:-1} -v t=${rangt:-1}"
     tput clear
-    cat "$rund/$$.tmp" | cut -c 1-$width | awk $vs "$rang $curs $prin"
+    cat "$rund/$$.tmp" | cut -c 1-$width | awk $vs "$rang $prin"
 }
 
 function mainLoop {
@@ -51,7 +46,6 @@ function mainLoop {
             "init") init $args ;;
             "setPath") setPath $args ;;
             "range") range $args ;;
-            "cursor") cursor $args ;;
             "preview") preview ;;
             *) echo OpOpenServer does not recognize command $cmd ;;
         esac

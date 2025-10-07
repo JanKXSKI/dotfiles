@@ -12,7 +12,6 @@ function request {
     echo "init 20 30"
     echo "setPath MinimapServer"
     echo "range 12 40"
-    echo "cursor 23"
     echo "preview"
 }
 request | nc -vU "$socket" || (echo "failed to connect"; exit)
