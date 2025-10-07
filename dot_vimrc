@@ -26,10 +26,11 @@ nnoremap <Leader>s :vsplit <bar> :OpFile <CR>
 nnoremap <Leader>g :call OpGrepWithWordUnderCursor() <CR>
 nnoremap <Leader>b :OpGitLog
 nnoremap <Leader>d :let @d=expand('%:p').':'.line('.') <bar> let @f=expand('%:p') <bar> let @l=line('w0').','.line('w$') <CR>
+nnoremap <Leader>r :OpSession <CR>
 
 nnoremap <C-P> :call AddOrFocusTerminal() <CR>
 inoremap <C-P> <Esc> :call AddOrFocusTerminal() <CR>
-tnoremap <C-P> <C-W>: hide q <bar> let &laststatus=2 <CR>
+tnoremap <C-P> <C-W>: hide <bar> let &laststatus=2 <CR>
 tnoremap jj <C-W>: call HideTerminalAndReplaceWindowWithBuffer() <CR>
 
 set shiftwidth=4 smarttab expandtab

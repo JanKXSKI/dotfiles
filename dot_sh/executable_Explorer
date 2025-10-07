@@ -20,24 +20,23 @@ function filteredLs {
 
 function printToNeedle {
     need=$1
-    inde="$2"
-    if [[ -z $inde ]]; then
-        nop=" "
-        nep=" • "
+    levl=$2
+    if [[ $levl -eq 0 ]]; then
+        nop="  "
+        nep=" •"
     else
         nop="│ "
-        nep="╰─╴• "
+        nep="╰•"
     fi
-    prin='$0==n { s=e } 1 { print i s $0; if (s!=o) exit }'
-    awk -v n=$need -v s="$nop" -v e="$nep" -v o="$nop" -v i="$inde" "$prin"
+    prin='$0==n { s=e } 1 { i=sprintf("%*.*s", l+2, l+2, s); print i $0; if (s!=o) exit }'
+    awk -v n=$need -v s="$nop" -v e="$nep" -v o="$nop" -v l=$levl "$prin"
 }
 
 function printToEnd {
     need=$1
-    inde="$2"
-    nop="$3"
-    prin='1 { if (p) print i o $0 } $0==n { p=1 }'
-    awk -v n=$need -v i="$inde" -v o="$nop" "$prin"
+    levl=$2
+    prin='BEGIN { i=sprintf("%*.*s", l+2, l+2, " ") } 1 { if (p) print i $0 } $0==n { p=1 }'
+    awk -v n=$need -v l="$levl" "$prin"
 }
 
 function fillOut {
@@ -48,19 +47,14 @@ function fillOut {
 
 function previewRec {
     local dir=$1
-    local inde="${2:-""}"
-    if [[ $inde == "" ]]; then
-        local nop=" "
-    else
-        local nop="┆  "
-    fi
+    local levl="${2:-0}"
     local next;
     if read next; then
-        filteredLs $dir | printToNeedle $next "$inde" | cut -c 1-$width >> $out1
+        filteredLs $dir | printToNeedle $next $levl | cut -c 1-$width >> $out1
         if [[ $next == */ ]]; then
-            previewRec "$dir/${next%/}" "${inde}${nop}"
+            previewRec "$dir/${next%/}" $(($levl + 1)) 
         fi
-        filteredLs $dir | printToEnd $next "$inde" "$nop" | cut -c 1-$width >> $out2
+        filteredLs $dir | printToEnd $next $levl | cut -c 1-$width >> $out2
     fi
 }
 

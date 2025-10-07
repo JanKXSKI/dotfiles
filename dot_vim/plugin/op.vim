@@ -1,11 +1,17 @@
 let g:opFileServer = job_start([$HOME.."/.sh/OpFileServer"])
 let g:opFileRequest = $HOME.."/.sh/Request "..ch_readraw(g:opFileServer)
+function! OpFileSink(selected)
+    if exists("g:codeFileServerFifo")
+        call CodeFileServerRefresh(a:selected)
+    endif
+    exe "e" a:selected
+endfunction
 let s:source = "'find . -path ./.git -prune -or \"(\" -type f -or -type l \")\" -and ! -name *.swp -print | sed s#^\\./##'"
 let s:preview = "'"..g:opFileRequest.." preview'"
 let s:bindFocus = "'--bind', 'focus:execute-silent("..g:opFileRequest.." init {} $FZF_PREVIEW_COLUMNS $FZF_PREVIEW_LINES)+refresh-preview'"
 let s:bindClearQuery = "'--bind', 'ctrl-l:clear-query'"
 let s:options = "['--preview', "..s:preview..", "..s:bindFocus..", "..s:bindClearQuery.."]"
-exe "command OpFile call fzf#run({'source': " s:source ",'options':" s:options ", 'sink': 'e'})"
+exe "command OpFile call fzf#run(fzf#wrap({'source': " s:source ",'options':" s:options ", 'sink': function('OpFileSink')}))"
 
 let s:source = "'git log --format=''%h %an %ar: %s'' -- '..expand('%')"
 let s:previewGit = "'echo {} | awk ''{print $1}'' | xargs -I{} git show {}:'..expand('%')"
@@ -13,7 +19,7 @@ let s:preview = s:previewGit.."..' | bat -n --color=always -l='..split(expand('%
 let s:previewWindow = "'+'..line('w0')"
 let s:bindPreviewUpDown = "'--bind', 'ctrl-u:preview-half-page-up', '--bind', 'ctrl-d:preview-half-page-down'"
 let s:options = "['--preview', "..s:preview..", '--preview-window', "..s:previewWindow..", "..s:bindPreviewUpDown.."]"
-exe "command OpGitLog call fzf#run({'source': " s:source ", 'options':" s:options "})"
+exe "command OpGitLog call fzf#run(fzf#wrap({'source': " s:source ", 'options':" s:options "}))"
 
 let g:opGrepServer = job_start([$HOME.."/.sh/OpGrepServer"])
 let g:opGrepRequest = $HOME.."/.sh/Request "..ch_readraw(g:opGrepServer)
@@ -27,8 +33,25 @@ let s:preview = "'"..g:opGrepRequest.." preview'"
 let s:bindInit = "'--bind', 'focus:execute-silent("..g:opGrepRequest.." init {1} $FZF_PREVIEW_LINES <args>)+refresh-preview'"
 let s:bindNext = "'--bind', 'ctrl-n:execute-silent("..g:opGrepRequest.." next)+refresh-preview'"
 let s:options = "['-d', ':', '--nth', '1', '--preview', "..s:preview..", "..s:bindInit..", "..s:bindNext.."]"
-exe "command -nargs=+ OpGrep call fzf#run({'source': " s:source ", 'options':" s:options ", 'sink': function('OpenFileFromOpGrepList')})"
+exe "command -nargs=+ OpGrep call fzf#run(fzf#wrap({'source': " s:source ", 'options':" s:options ", 'sink': function('OpenFileFromOpGrepList')}))"
 
 function OpGrepWithWordUnderCursor()
     call feedkeys(":OpGrep "..expand("<cword>"))
 endfunction
+
+function! OpenCodeSession(selected)
+    if !exists("g:codeSessionsFile")
+        echom "Vim not opened with code."
+        return
+    endif
+    try
+        sbm
+        wincmd J
+        echoe "Cannot leave here, buffer has changes."
+    catch /No modified buffer/
+        call system("~/.sh/WriteLeastRecentlyUsed "..g:codeSessionsFile.." "..a:selected)
+        qa
+    endtry
+endfunction
+let s:source = "'cat ~/bin/run/sessions'"
+exe "command OpSession call fzf#run(fzf#wrap({'source': " s:source ", 'sink': function('OpenCodeSession')}))"

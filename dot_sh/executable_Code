@@ -20,11 +20,6 @@ trap "rm '$rund/$$.fifo'" EXIT
 tmux split-window -hdIP -p 11 -F "#{pane_index} #{pane_width} #{pane_height}" <&$opFileServerfd >"$rund/$$.fifo" &
 read opFileServerPaneId w h <"$rund/$$.fifo"
 
-color="#202020"
-tmux set -pt $opFileServerPaneId window-style fg="#bebebe",bg=$color
-tmux set -pt $opFileServerPaneId pane-border-style fg=$color,bg=$color
-tmux set -pt $opFileServerPaneId pane-active-border-style fg=$color,bg=$color
-
 echo "$rund/$$.fifo" "init" "." "$w" "$h" > $opFileServerFifo
 read < "$rund/$$.fifo"
 echo "$rund/$$.fifo" "previewToStdout" > $opFileServerFifo

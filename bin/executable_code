@@ -7,9 +7,9 @@ mkdir -p "$rund"
 sessionLocation="${1:-$(pwd)}"
 
 function launch {
-    sesl="$1"
+    sesl="$(realpath $1)"
     remote="${sesl%:*}"
-    echo "$sesl" > "$rund/sessions"
+    ~/.sh/WriteLeastRecentlyUsed "$rund/sessions" "$sesl"
     if [[ "$sesl" != "$remote" ]]; then
         rdir="bin/sessions-from/$remote"
         sess="$remote:$rdir/sessions"
