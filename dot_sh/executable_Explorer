@@ -30,14 +30,14 @@ function printToNeedle {
         nop="│ "
         nep="╰•"
     fi
-    prin='$0==n { s=e; h=sprintf("%*s",w,"") } 1 { i=l>0?sprintf("%*.*s", l+2, l+2, ""):""; print i s $0 h; if (s!=o) exit }'
+    prin='$0==n { s=e; h=sprintf("%*s",w,"") } 1 { i=l>0?sprintf("%*s", l, ""):""; print i s $0 h; if (s!=o) exit }'
     awk -v n=$need -v s="$nop" -v e="$nep" -v o="$nop" -v l=$levl -v w=$width "$prin"
 }
 
 function printToEnd {
     need=$1
     levl=$2
-    prin='BEGIN { i=sprintf("%*.*s", l+2, l+2, " ") } 1 { if (p) print i $0 } $0==n { p=1 }'
+    prin='BEGIN { i=sprintf("%*s", l+2, "") } 1 { if (p) print i $0 } $0==n { p=1 }'
     awk -v n=$need -v l="$levl" "$prin"
 }
 
