@@ -12,7 +12,7 @@ export TERM=xterm-256color
 function storeMap {
     lines=$(wc -l <$path)
     scale=$(echo "s = $(($height * 4)) / $lines; if (s > 1) s = 1; s" | bc -l)
-    code-minimap --padding $width -V $scale -H 0.3 $path > "$rund/$$.tmp"
+    code-minimap --padding $width -V $scale -H 0.3 $path | cut -c 1-$width > "$rund/$$.tmp"
 }
 
 function init {
