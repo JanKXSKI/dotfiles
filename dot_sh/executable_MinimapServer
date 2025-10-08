@@ -13,6 +13,8 @@ function storeMap {
     lines=$(wc -l <$path)
     scale=$(echo "s = $((($height - 1) * 4)) / $lines; if (s > 1) s = 1; s" | bc -l)
     code-minimap --padding $width -V $scale -H 0.3 $path | cut -c 1-$width > "$rund/$$.tmp"
+    from=0
+    to=0
 }
 
 function init {

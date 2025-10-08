@@ -1,17 +1,11 @@
 let g:opFileServer = job_start([$HOME.."/.sh/OpFileServer"])
 let g:opFileRequest = $HOME.."/.sh/Request "..ch_readraw(g:opFileServer)
-function! OpFileSink(selected)
-    if exists("g:codeFileServerFifo")
-        call CodeOnFileOpened(a:selected)
-    endif
-    exe "e" a:selected
-endfunction
 let s:source = "'find . -path ./.git -prune -or \"(\" -type f -or -type l \")\" -and ! -name *.swp -print | sed s#^\\./##'"
 let s:preview = "'"..g:opFileRequest.." preview'"
 let s:bindFocus = "'--bind', 'focus:execute-silent("..g:opFileRequest.." init {} $FZF_PREVIEW_COLUMNS $FZF_PREVIEW_LINES)+refresh-preview'"
 let s:bindClearQuery = "'--bind', 'ctrl-l:clear-query'"
 let s:options = "['--preview', "..s:preview..", "..s:bindFocus..", "..s:bindClearQuery.."]"
-exe "command OpFile call fzf#run(fzf#wrap({'source': " s:source ",'options':" s:options ", 'sink': function('OpFileSink')}))"
+exe "command OpFile call fzf#run(fzf#wrap({'source': " s:source ",'options':" s:options ", 'sink': 'edit'}))"
 
 let s:source = "'git log --format=''%h %an %ar: %s'' -- '..expand('%')"
 let s:previewGit = "'echo {} | awk ''{print $1}'' | xargs -I{} git show {}:'..expand('%')"
@@ -26,10 +20,7 @@ let g:opGrepRequest = $HOME.."/.sh/Request "..ch_readraw(g:opGrepServer)
 function! OpGrepSink(selected)
     let l:num = system(g:opGrepRequest.." getSelectedLineNumber")
     let l:file = split(a:selected, ":")[0]
-    if exists("g:codeFileServerFifo")
-        call CodeOnFileOpened(l:file)
-    endif
-    exe ":e +"..l:num.." "..l:file
+    exe "edit +"..l:num.." "..l:file
 endfunction
 let s:source = "'ag -cU <args>'"
 let s:preview = "'"..g:opGrepRequest.." preview'"

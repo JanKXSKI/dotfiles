@@ -16,6 +16,8 @@ function! CodeOnFileOpened(newPath)
     call system(g:codeFileServerRequest.." setPath "..shellescape(a:newPath))
     call system(g:codeFileServerRequest.." previewToStdout")
     call ch_sendraw(g:codeMinimapChannel, "setPath "..a:newPath.."\n")
+    let g:codeMinimapRangeFrom = 0
+    let g:codeMinimapRangeTo = 0
 endfunction
 
 function! CodeOnCursorMoved()
