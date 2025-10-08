@@ -30,7 +30,7 @@ nnoremap <Leader>r :OpSession <CR>
 
 nnoremap <C-P> :call AddOrFocusTerminal() <CR>
 inoremap <C-P> <Esc> :call AddOrFocusTerminal() <CR>
-tnoremap <C-P> <C-W>: hide <CR>
+tnoremap <C-P> <C-W>: call HideTerminal() <CR>
 tnoremap jj <C-W>: call HideTerminalAndReplaceWindowWithBuffer() <CR>
 
 set shiftwidth=4 smarttab expandtab

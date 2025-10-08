@@ -7,14 +7,13 @@ function! TerminalToggleStatusLine()
 endfunction
 
 function! AddOrFocusTerminal()
-    wincmd b
-    if &buftype == "terminal"
+    let l:terminals = filter(getbufinfo(), "getbufvar(v:val.bufnr, \"&buftype\") == \"terminal\"")
+    if !empty(filter(copy(l:terminals), "!v:val.hidden"))
         return
     endif
     if bufname() == ''
         bd
     endif
-    let l:terminals = filter(getbufinfo(), "getbufvar(v:val.bufnr, \"&buftype\") == \"terminal\"")
     if !empty(l:terminals)
         execute "sb" l:terminals[0].bufnr
     else
@@ -33,6 +32,20 @@ function! HideTerminalAndReplaceWindowWithBuffer()
     hide ene
     silent normal! VpG
     setlocal nomodified
+endfunction
+
+function! HideTerminal()
+    if len(getbufinfo()) == 1
+        hide ene
+        return
+    endif
+    let l:termbufnr = bufnr()
+    if winnr("$") == 1
+        vertical ball
+    else
+        wincmd p
+    endif
+    exe bufwinnr(l:termbufnr).."hide"
 endfunction
 
 function! TerminalSensitiveWindowMove(dirKey)
