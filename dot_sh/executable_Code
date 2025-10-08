@@ -21,20 +21,23 @@ sess=$2
 
 mkfifo "$rund/$$.fifo"
 
+side=20
+bot=7
+
 exec {opFileServerfd}< <(~/.sh/OpFileServer)
 opFileServerPid=$!
 read opFileServerFifo <&$opFileServerfd
-tmux split-window -hdIP -l 42 -F "#{pane_index} #{pane_height}" <&$opFileServerfd >"$rund/$$.fifo" &
+tmux split-window -hdIP -l $((2 * $side + 2)) -F "#{pane_index} #{pane_height}" <&$opFileServerfd >"$rund/$$.fifo" &
 read opFileServerPaneId h <"$rund/$$.fifo"
 
-echo "$rund/$$.fifo" "init" "." "20" "$(($h - 5 - 1))" > $opFileServerFifo
+echo "$rund/$$.fifo" "init" "." "20" "$(($h - $bot - 1))" > $opFileServerFifo
 read < "$rund/$$.fifo"
 echo "$rund/$$.fifo" "previewToStdout" > $opFileServerFifo
 read < "$rund/$$.fifo"
 
-tmux split-window -dI -t $opFileServerPaneId -l 7 < <(cat <(tail -n 1 $sess | xargs printf "\033[48;5;237m%-41.41s\033[0m\n") <(tac $sess | head -n 7 | sed '1d' | cut -c 1-41))
+tmux split-window -dI -t $opFileServerPaneId -l $bot < <(cat <(tail -n 1 $sess | xargs printf "\033[48;5;237m%-41.41s\033[0m\n") <(tac $sess | head -n $bot | sed '1d' | cut -c 1-41))
 
-tmux split-window -hdPb -t $opFileServerPaneId -l 20 -F "#{pane_pid} #{pane_width} #{pane_height}" "~/.sh/MinimapServer" >"$rund/$$.fifo" &
+tmux split-window -hdPb -t $opFileServerPaneId -l $side -F "#{pane_pid} #{pane_width} #{pane_height}" "~/.sh/MinimapServer" >"$rund/$$.fifo" &
 read minimapServerPid minimapWidth minimapHeight <"$rund/$$.fifo"
 minimapServerSocket="$rund/$minimapServerPid.socket"
 while ! [[ -e "$minimapServerSocket" ]]; do sleep 0.1s; done 
