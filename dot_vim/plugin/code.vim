@@ -14,8 +14,9 @@ function! CodeOnFileOpened(newPath)
     if empty(a:newPath)
         return
     endif
-    call ch_sendraw(g:codeExplorerChannel, "previewWithPath "..a:newPath.."\n")
-    call ch_sendraw(g:codeMinimapChannel, "setPath "..a:newPath.."\n")
+    let l:relativePath = fnamemodify(a:newPath, ":.") 
+    call ch_sendraw(g:codeExplorerChannel, "previewWithPath "..l:relativePath.."\n")
+    call ch_sendraw(g:codeMinimapChannel, "setPath "..l:relativePath.."\n")
     let g:codeMinimapRangeFrom = 0
     let g:codeMinimapRangeTo = 0
 endfunction
