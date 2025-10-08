@@ -29,5 +29,12 @@ function! CodeOnCursorMoved()
     call ch_sendraw(g:codeMinimapChannel, "previewWithRange "..l:from.." "..l:to.."\n")
 endfunction
 
-autocmd SessionLoadPost * call CodeOnFileOpened(expand("%"))
+function! CodeOnFileRefresh()
+    call CodeOnFileOpened(expand("%"))
+    call CodeOnCursorMoved()
+endfunction
+
 autocmd CursorMoved * call CodeOnCursorMoved()
+autocmd BufWritePost * call CodeOnFileRefresh()
+autocmd BufEnter * call CodeOnFileRefresh()
+autocmd SessionLoadPost * call CodeOnFileRefresh()
