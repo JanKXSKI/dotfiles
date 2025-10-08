@@ -1,3 +1,11 @@
+function! TerminalToggleStatusLine()
+    if &buftype == "terminal"
+        set laststatus=0
+    else
+        set laststatus=2
+    endif
+endfunction
+
 function! AddOrFocusTerminal()
     wincmd b
     if &buftype == "terminal"
@@ -13,6 +21,7 @@ function! AddOrFocusTerminal()
         term
     endif
     wincmd J
+    call TerminalToggleStatusLine()
 endfunction
 
 function! HideTerminalAndReplaceWindowWithBuffer()
@@ -28,14 +37,6 @@ endfunction
 
 function! TerminalSensitiveWindowMove(dirKey)
     execute "wincmd" a:dirKey
-endfunction
-
-function! TerminalToggleStatusLine()
-    if &buftype == "terminal"
-        set laststatus=0
-    else
-        set laststatus=2
-    endif
 endfunction
 
 autocmd TerminalOpen * call TerminalToggleStatusLine()
