@@ -1,8 +1,9 @@
-if !exists("g:codeFileServerFifo")
+if !exists("g:codeSessionsFile")
     finish
 endif
 
-let g:codeFileServerRequest = $HOME.."/.sh/Request "..g:codeFileServerFifo
+let g:codeExplorerChannel = ch_open("unix:"..g:codeExplorerServerSocket)
+call ch_sendraw(g:codeExplorerChannel, "init "..g:codeExplorerWidth.. " "..g:codeExplorerHeight.."\n")
 
 let g:codeMinimapChannel = ch_open("unix:"..g:codeMinimapServerSocket)
 let g:codeMinimapRangeFrom = 0
@@ -13,8 +14,7 @@ function! CodeOnFileOpened(newPath)
     if empty(a:newPath)
         return
     endif
-    call system(g:codeFileServerRequest.." setPath "..shellescape(a:newPath))
-    call system(g:codeFileServerRequest.." previewToStdout")
+    call ch_sendraw(g:codeExplorerChannel, "previewWithPath "..a:newPath.."\n")
     call ch_sendraw(g:codeMinimapChannel, "setPath "..a:newPath.."\n")
     let g:codeMinimapRangeFrom = 0
     let g:codeMinimapRangeTo = 0

@@ -4,106 +4,30 @@ mkdir -p "$rund"
 . ~/.sh/logging.sh "$rund"
 
 socket=$rund/$$.socket
-touch "$rund/$$.tmp"
-trap "rm $socket; rm '$rund/$$.tmp'" EXIT
-
-export TERM=xterm-256color
-
-function storeMap {
-    lines=$(wc -l <$path)
-    scale=$(echo "s = $((($height - 1) * 4)) / $lines; if (s > 1) s = 1; s" | bc -l)
-    code-minimap --padding $width -V $scale -H 0.3 $path | cut -c 1-$width > "$rund/$$.tmp"
-    from=0
-    to=0
-}
+trap "rm $socket" EXIT
 
 function init {
     width=$1
     height=$2
-    from=0
-    to=0
 }
 
-function setPath {
-    path=$1
-    storeMap
-    tput clear
-    cat "$rund/$$.tmp"
-}
-
-function keyDo {
-    [[ $1 -lt $from ]] && echo 0 && return
-    [[ $1 -gt $to ]] && echo 2 && return
-    echo 1
-}
-
-function deleteDo {
-    [[ $2 -lt $1 || $1 -lt 1 ]] && return
-    tput cup $(($1 - 1)) 0
-    cat "$rund/$$.tmp" | sed -n "$1,$2p"
-}
-
-function addDo {
-    [[ $2 -lt $1 || $1 -lt 1 ]] && return
-    tput cup $(($1 - 1)) 0
-    cat "$rund/$$.tmp" | sed -n "$1,$2{s#^#$(tput setab 237)#;s#\$#$(tput sgr0)#;p;}"
-}
-
-function caseDo {
-    case "$(keyDo $1)$(keyDo $2)" in
-        00)
-            deleteDo $from $to
-            addDo $1 $2
-            ;;
-        01)
-            addDo $1 $(($from - 1))
-            deleteDo $(($2 + 1)) $to
-            ;;
-        02)
-            addDo $1 $(($from - 1))
-            addDo $(($to + 1)) $2
-            ;;
-        11)
-            deleteDo $from $(($1 - 1))
-            deleteDo $(($2 + 1)) $to
-            ;;
-        12)
-            deleteDo $from $(($1 - 1))
-            addDo $(($to + 1)) $2
-            ;;
-        22)
-            deleteDo $from $to
-            addDo $1 $2
-            ;;
-    esac
-}
-
-function mapDo {
-    flt=$(echo "($1/4)*$scale+1" | bc -l)
-    echo ${flt%.*}
-}
-
-function previewWithRange {
-    if [[ -z $height || -z $scale ]]; then
-        echo "Minimap not yet initialized..."
+function previewWithPath {
+    if [[ -z $height ]]; then
+        echo "Explorer not yet initialized..."
         return
     fi
-    newFrom=$(mapDo $1)
-    newTo=$(mapDo $2)
-    caseDo $newFrom $newTo 
-    from=$newFrom
-    to=$newTo
+    tput clear
+    $(dirname $0)/Explorer $1 $width $height
 }
 
 function mainLoop {
     while read cmd args; do
         case $cmd in
             "init") init $args ;;
-            "setPath") setPath $args ;;
-            "previewWithRange") previewWithRange $args ;;
-            *) echo MinimapServer does not recognize command $cmd ;;
+            "previewWithPath") previewWithPath $args ;;
+            *) echo ExplorerServer does not recognize command $cmd ;;
         esac
     done
 }
 
-nc -Ul $socket | mainLoop
+nc -kUl $socket | mainLoop

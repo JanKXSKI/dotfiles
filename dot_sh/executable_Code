@@ -24,26 +24,21 @@ mkfifo "$rund/$$.fifo"
 side=20
 bot=7
 
-exec {opFileServerfd}< <(~/.sh/OpFileServer)
-opFileServerPid=$!
-read opFileServerFifo <&$opFileServerfd
-tmux -2 split-window -hdIP -l $((2 * $side + 2)) -F "#{pane_index} #{pane_height}" <&$opFileServerfd >"$rund/$$.fifo" &
-read opFileServerPaneId h <"$rund/$$.fifo"
+tmux -2 split-window -hdP -l $((2 * $side + 2)) -F "#{pane_index} #{pane_pid} #{pane_height}" "~/.sh/ExplorerServer" >"$rund/$$.fifo" &
+read explorerPaneId explorerServerPid h <"$rund/$$.fifo"
+explorerServerSocket="$rund/$explorerServerPid.socket"
+explorerWidth=$side
+explorerHeight=$(($h - $bot - 2))
+while ! [[ -e "$explorerServerSocket" ]]; do sleep 0.1s; done
 
-echo "$rund/$$.fifo" "init" "." "20" "$(($h - $bot - 2))" > $opFileServerFifo
-read < "$rund/$$.fifo"
-echo "$rund/$$.fifo" "previewToStdout" > $opFileServerFifo
-read < "$rund/$$.fifo"
+tmux -2 split-window -dI -t $explorerPaneId -l $bot < <(cat <(tail -n 1 $sess | xargs printf "\033[48;5;237m%-41.41s\033[0m\n") <(tac $sess | head -n $bot | sed '1d' | cut -c 1-41))
 
-tmux -2 split-window -dI -t $opFileServerPaneId -l $bot < <(cat <(tail -n 1 $sess | xargs printf "\033[48;5;237m%-41.41s\033[0m\n") <(tac $sess | head -n $bot | sed '1d' | cut -c 1-41))
-
-tmux -2 split-window -hdPb -t $opFileServerPaneId -l $side -F "#{pane_pid} #{pane_width} #{pane_height}" "~/.sh/MinimapServer" >"$rund/$$.fifo" &
+tmux -2 split-window -hdPb -t $explorerPaneId -l $side -F "#{pane_pid} #{pane_width} #{pane_height}" "~/.sh/MinimapServer" >"$rund/$$.fifo" &
 read minimapServerPid minimapWidth minimapHeight <"$rund/$$.fifo"
 minimapServerSocket="$rund/$minimapServerPid.socket"
 while ! [[ -e "$minimapServerSocket" ]]; do sleep 0.1s; done 
 
 function cleanup {
-    kill $opFileServerPid
     rm "$rund/$$.fifo"
     tmux kill-window
 }
@@ -53,7 +48,9 @@ sessionVim="$(dirname $sess)/vim-sessions/$(pwd | sed 's#/#ESCAPED_SLASH#g').vim
 [[ -e $sessionVim ]] && sessionOption="-S $sessionVim"
 vim $sessionOption \
     --cmd "let g:codeSessionsFile=\"$sess\""\
-    --cmd "let g:codeFileServerFifo=\"$opFileServerFifo\""\
+    --cmd "let g:codeExplorerWidth=\"$explorerWidth\""\
+    --cmd "let g:codeExplorerHeight=\"$explorerHeight\""\
+    --cmd "let g:codeExplorerServerSocket=\"$explorerServerSocket\""\
     --cmd "let g:codeMinimapWidth=\"$minimapWidth\""\
     --cmd "let g:codeMinimapHeight=\"$minimapHeight\""\
     --cmd "let g:codeMinimapServerSocket=\"$minimapServerSocket\""
