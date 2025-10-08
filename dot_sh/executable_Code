@@ -32,7 +32,7 @@ read < "$rund/$$.fifo"
 echo "$rund/$$.fifo" "previewToStdout" > $opFileServerFifo
 read < "$rund/$$.fifo"
 
-tmux split-window -dI -t $opFileServerPaneId -l 7 < <(cat <(tail -n 1 $sess | xargs printf "\033[48;5;237m%-41.41s\033[0m\n") <(tail -rn 7 $sess | sed '1d' | cut -c 1-41))
+tmux split-window -dI -t $opFileServerPaneId -l 7 < <(cat <(tail -n 1 $sess | xargs printf "\033[48;5;237m%-41.41s\033[0m\n") <(tac $sess | head -n 7 | sed '1d' | cut -c 1-41))
 
 tmux split-window -hdPb -t $opFileServerPaneId -l 20 -F "#{pane_pid} #{pane_width} #{pane_height}" "~/.sh/MinimapServer" >"$rund/$$.fifo" &
 read minimapServerPid minimapWidth minimapHeight <"$rund/$$.fifo"
