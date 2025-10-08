@@ -37,4 +37,3 @@ endfunction
 autocmd CursorMoved * call CodeOnCursorMoved()
 autocmd BufWritePost * call CodeOnFileRefresh()
 autocmd BufEnter * call CodeOnFileRefresh()
-autocmd SessionLoadPost * call CodeOnFileRefresh()
