@@ -30,7 +30,7 @@ nnoremap <Leader>r :OpSession <CR>
 
 nnoremap <C-P> :call AddOrFocusTerminal() <CR>
 inoremap <C-P> <Esc> :call AddOrFocusTerminal() <CR>
-tnoremap <C-P> <C-W>: hide <bar> let &laststatus=2 <CR>
+tnoremap <C-P> <C-W>: hide <CR>
 tnoremap jj <C-W>: call HideTerminalAndReplaceWindowWithBuffer() <CR>
 
 set shiftwidth=4 smarttab expandtab
@@ -58,7 +58,7 @@ set background=dark
 hi! link StatusLineTerm StatusLine
 hi! link StatusLineTermNC StatusLineNC
 let &laststatus=2
-hi terminal ctermfg=lightgrey ctermbg=black guifg=lightgrey guibg=#22201f
+hi terminal ctermfg=223 ctermbg=234
 
 let g:EasyMotion_do_mapping = 0
 map <Leader>f <Plug>(easymotion-bd-f2)

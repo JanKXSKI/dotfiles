@@ -13,7 +13,6 @@ function! AddOrFocusTerminal()
         term
     endif
     wincmd J
-    let &laststatus=0
 endfunction
 
 function! HideTerminalAndReplaceWindowWithBuffer()
@@ -30,3 +29,14 @@ endfunction
 function! TerminalSensitiveWindowMove(dirKey)
     execute "wincmd" a:dirKey
 endfunction
+
+function! TerminalToggleStatusLine()
+    if &buftype == "terminal"
+        set laststatus=0
+    else
+        set laststatus=2
+    endif
+endfunction
+
+autocmd TerminalOpen * call TerminalToggleStatusLine()
+autocmd WinEnter * call TerminalToggleStatusLine()
