@@ -5,7 +5,7 @@ rund="$(dirname $0)/run"
 mkdir -p "$rund"
 . ~/.sh/logging.sh "$rund"
 
-exec {fd}< <(./MinimapServer)
+./MinimapServer &
 socket="$rund/$!.socket"
 while [[ ! -e $socket ]]; do sleep 0.1s; done
 function request {
@@ -15,4 +15,3 @@ function request {
     echo "preview"
 }
 request | nc -vU "$socket" || (echo "failed to connect"; exit)
-cat <&$fd
