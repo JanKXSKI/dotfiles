@@ -26,8 +26,7 @@ function! CodeOnCursorMoved()
     endif
     let g:codeMinimapRangeFrom = l:from
     let g:codeMinimapRangeTo = l:to
-    call ch_sendraw(g:codeMinimapChannel, "range "..l:from.." "..l:to.."\n")
-    call ch_sendraw(g:codeMinimapChannel, "preview\n")
+    call ch_sendraw(g:codeMinimapChannel, "previewWithRange "..l:from.." "..l:to.."\n")
 endfunction
 
 autocmd SessionLoadPost * call CodeOnFileOpened(expand("%"))

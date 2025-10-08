@@ -11,7 +11,11 @@ while [[ ! -e $socket ]]; do sleep 0.1s; done
 function request {
     echo "init 20 30"
     echo "setPath MinimapServer"
-    echo "range 12 40"
-    echo "preview"
+    sleep 1
+    echo "previewWithRange 12 40" && sleep 1
+    echo "previewWithRange 50 60" && sleep 1
+    echo "previewWithRange 1 90" && sleep 1
+    echo "previewWithRange 20 40" && sleep 1
+    echo "previewWithRange 5 15" && sleep 1
 }
-request | nc -vU "$socket" || (echo "failed to connect"; exit)
+request | nc -U "$socket" || (echo "failed to connect"; exit)
