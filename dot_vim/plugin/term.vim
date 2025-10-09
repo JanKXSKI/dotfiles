@@ -40,11 +40,13 @@ function! HideTerminal()
         return
     endif
     let l:termbufnr = bufnr()
+    let g:codeAutocommandsEnabled=0
     if winnr("$") == 1
         vertical ball
     else
         wincmd p
     endif
+    let g:codeAutocommandsEnabled=1
     exe bufwinnr(l:termbufnr).."hide"
 endfunction
 

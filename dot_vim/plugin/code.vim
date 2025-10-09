@@ -2,32 +2,40 @@ if !exists("g:codeSessionsFile")
     finish
 endif
 
+let g:codeCurrentRelativePath = ""
+let g:codeAutocommandsEnabled = 1
+
 let g:codeExplorerChannel = ch_open("unix:"..g:codeExplorerServerSocket)
 call ch_sendraw(g:codeExplorerChannel, "init "..g:codeExplorerWidth.. " "..g:codeExplorerHeight.."\n")
 
 let g:codeMinimapChannel = ch_open("unix:"..g:codeMinimapServerSocket)
 let g:codeMinimapRangeFrom = 0
 let g:codeMinimapRangeTo = 0
-let g:codeMinimapCurrentRelativePath = ""
 call ch_sendraw(g:codeMinimapChannel, "init "..g:codeMinimapWidth.." "..g:codeMinimapHeight.."\n")
 
 function! CodeOnFileOpened(newPath)
+    if !g:codeAutocommandsEnabled
+        return
+    endif
     if empty(a:newPath)
         return
     endif
     let l:relativePath = fnamemodify(a:newPath, ":.") 
-    if l:relativePath[0] == "/" || !filereadable(l:relativePath)
+    if l:relativePath[0] == "/" || !filereadable(l:relativePath) || l:relativePath == g:codeCurrentRelativePath
         return
     endif
     call ch_sendraw(g:codeExplorerChannel, "previewWithPath "..l:relativePath.."\n")
     call ch_sendraw(g:codeMinimapChannel, "setPath "..l:relativePath.."\n")
     let g:codeMinimapRangeFrom = 0
     let g:codeMinimapRangeTo = 0
-    let g:codeMinimapCurrentRelativePath = l:relativePath
+    let g:codeCurrentRelativePath = l:relativePath
 endfunction
 
 function! CodeOnAnyWindowScrolled()
-    if fnamemodify(expand("%"), ":.") != g:codeMinimapCurrentRelativePath
+    if !g:codeAutocommandsEnabled
+        return
+    endif
+    if fnamemodify(expand("%"), ":.") != g:codeCurrentRelativePath
         return
     endif
     let l:from = getpos("w0")[1]
