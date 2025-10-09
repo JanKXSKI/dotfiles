@@ -60,7 +60,7 @@ set background=dark
 hi! link StatusLineTerm StatusLine
 hi! link StatusLineTermNC StatusLineNC
 let &laststatus=2
-hi terminal ctermfg=250 ctermbg=234
+hi normal ctermfg=NONE ctermbg=NONE
 
 let g:EasyMotion_do_mapping = 0
 map <Leader>f <Plug>(easymotion-bd-f2)
