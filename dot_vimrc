@@ -57,6 +57,7 @@ endtry
 
 set background=dark
 
+hi! link StatusLine CursorLineNr
 hi! link StatusLineTerm StatusLine
 hi! link StatusLineTermNC StatusLineNC
 let &laststatus=2
