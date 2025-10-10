@@ -22,7 +22,7 @@ function! OpGrepSink(selected)
     exe "edit +"..l:num.." "..l:file
 endfunction
 let s:source = "'ag -cU <args>'"
-let s:preview = "'"..$HOME.."/.sh/RequestEval "..s:opGrepSocket.." preview {1} $FZF_PREVIEW_LINES <q-args>'"
+let s:preview = "'"..$HOME.."/.sh/RequestEvalRetry "..s:opGrepSocket.." preview {1} $FZF_PREVIEW_LINES <q-args>'"
 let s:bindNext = "'--bind', 'ctrl-n:refresh-preview'"
 let s:options = "['-d', ':', '--nth', '1', '--preview', "..s:preview..", "..s:bindNext.."]"
 exe "command -nargs=+ OpGrep call fzf#run(fzf#wrap({'source': " s:source ", 'options':" s:options ", 'sink': function('OpGrepSink')}))"

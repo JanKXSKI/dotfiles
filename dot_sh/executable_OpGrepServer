@@ -38,6 +38,7 @@ mkfifo $outfifo
 
 while [[ -z $handledGet ]]; do
     nc -Ul $socket >$infifo <$outfifo &
+    ncPid=$!
     exec {ifd}<$infifo
     exec {ofd}>$outfifo
     read -u $ifd cmd args
@@ -48,5 +49,6 @@ while [[ -z $handledGet ]]; do
     esac
     exec {ifd}<&-
     exec {ofd}>&-
+    wait $ncPid
     rm $socket
 done

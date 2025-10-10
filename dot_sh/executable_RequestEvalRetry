@@ -1,0 +1,7 @@
+#! /usr/bin/env bash
+
+i=0
+while ! $(dirname $0)/RequestEval "$@"; do
+    sleep 0.1
+    if [[ i -eq 10 ]]; then break; else i=$(($i + 1)); fi
+done
