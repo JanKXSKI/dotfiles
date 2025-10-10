@@ -24,7 +24,7 @@ nnoremap <Leader>l :call TerminalSensitiveWindowMove("L") <CR>
 nnoremap <Leader>o :OpFile <CR>
 nnoremap <Leader>s :vsplit <bar> :OpFile <CR>
 nnoremap <Leader>g :call OpGrepWithWordUnderCursor() <CR>
-nnoremap <Leader>b :OpGitLog
+nnoremap <Leader>b :OpGitLog <CR>
 nnoremap <Leader>d :let @d=expand('%:p').':'.line('.') <bar> let @f=expand('%:p') <bar> let @l=line('w0').','.line('w$') <CR>
 nnoremap <Leader>r :OpSession <CR>
 
