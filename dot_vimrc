@@ -70,5 +70,6 @@ let g:EasyMotion_smartcase = 1
 
 set sessionoptions = "buffers"
 
+set ignorecase
 set smartcase
 set hlsearch
