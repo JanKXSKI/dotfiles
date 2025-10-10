@@ -12,8 +12,8 @@ shift
 exec {requestOut}>&1
 
 function askAndEcho {
-    echo "$1"
+    echo "$@"
     cat <$fifo >&$requestOut
 }
 
-askAndEcho "$*" | nc -U $socket >$fifo
+askAndEcho "$@" | nc -U $socket >$fifo

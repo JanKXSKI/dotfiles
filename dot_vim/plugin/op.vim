@@ -12,21 +12,20 @@ let s:bindPreviewUpDown = "'--bind', 'ctrl-u:preview-half-page-up', '--bind', 'c
 let s:options = "['--preview', "..s:preview..", '--preview-window', "..s:previewWindow..", "..s:bindPreviewUpDown.."]"
 exe "command OpGitLog call fzf#run(fzf#wrap({'source': " s:source ", 'options':" s:options "}))"
 
-let s:opGrepFile = $HOME.."/.sh/run/"..getpid()..".vim.grep.file"
 let s:opGrepSocket = $HOME.."/.sh/run/"..getpid()..".vim.grep.socket"
-let g:opGrepServer = job_start([$HOME.."/.sh/OpGrepPreviewServer", s:opGrepFile, s:opGrepSocket])
-let s:opGrepRequest = $HOME.."/.sh/RequestSend "..s:opGrepSocket
+let g:opGrepServer = job_start([$HOME.."/.sh/OpGrepServer", s:opGrepSocket])
 function! OpGrepSink(selected)
-    let l:num = ch_evalraw(ch_open("unix:"..s:opGrepSocket), "get\n")
+    let l:ch = ch_open("unix:"..s:opGrepSocket)
+    let l:num = ch_evalraw(l:ch, "get\n")
+    call ch_close(l:ch)
     let l:file = split(a:selected, ":")[0]
     exe "edit +"..l:num.." "..l:file
 endfunction
 let s:source = "'ag -cU <args>'"
-let s:preview = "'tail -f "..s:opGrepFile.."'"
-let s:bindInit = "'--bind', 'focus:execute-silent:"..s:opGrepRequest.." init {1} $FZF_PREVIEW_LINES <q-args>'"
-let s:bindNext = "'--bind', 'ctrl-n:execute-silent("..s:opGrepRequest.." next)+refresh-preview'"
-let s:options = "['-d', ':', '--nth', '1', '--preview', "..s:preview..", "..s:bindInit..", "..s:bindNext.."]"
-exe "command -nargs=+ OpGrep call writefile([], '"..s:opGrepFile.."') | call fzf#run(fzf#wrap({'source': " s:source ", 'options':" s:options ", 'sink': function('OpGrepSink')}))"
+let s:preview = "'"..$HOME.."/.sh/RequestEval "..s:opGrepSocket.." preview {1} $FZF_PREVIEW_LINES <q-args>'"
+let s:bindNext = "'--bind', 'ctrl-n:refresh-preview'"
+let s:options = "['-d', ':', '--nth', '1', '--preview', "..s:preview..", "..s:bindNext.."]"
+exe "command -nargs=+ OpGrep call fzf#run(fzf#wrap({'source': " s:source ", 'options':" s:options ", 'sink': function('OpGrepSink')}))"
 
 function OpGrepWithWordUnderCursor()
     call feedkeys(":OpGrep "..expand("<cword>"))

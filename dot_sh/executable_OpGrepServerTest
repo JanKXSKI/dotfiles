@@ -1,9 +1,10 @@
 #! /usr/bin/env bash
 socket=$1
-function request {
-    echo "init OpGrepServer 10 function" && sleep 1
-    echo "next" && sleep 1
-    echo "next" && sleep 1
-}
-request | nc -U "$socket"
-$(dirname $0)/Request $socket "get"
+$(dirname $0)/RequestEval $socket preview OpGrepServer 20 function
+sleep 1
+$(dirname $0)/RequestEval $socket preview MinimapServer 20 function
+sleep 1
+$(dirname $0)/RequestEval $socket preview MinimapServer 20 function
+sleep 1
+$(dirname $0)/RequestEval $socket get
+sleep 1

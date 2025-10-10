@@ -6,32 +6,26 @@ mkdir -p $rund
 socket="${1:-$rund/$$.socket}"
 infifo="$rund/$$.in.fifo"
 outfifo="$rund/$$.out.fifo"
-trap "rm $socket; rm $infifo; rm $outfifo" EXIT
+trap "rm $infifo; rm $outfifo" EXIT
 
-function init {
+function reinit {
     file=$1
     cont=$(($2-2))
     agas="${@:3}"
     maxi=$(ag "$agas" $file | wc -l)
     curi=0
-    next
 }
 
 function next {
     curi=$(($curi % $maxi + 1))
     rang="rmin = \$1 - $cont/2; rmax = \$1 + $cont/2; if (rmin < 1) { rmax -= (rmin - 1); rmin = 1; }  printf \"-r %d:%d -H %d\", rmin, rmax, \$1"
     bata=$(ag --numbers "$agas" $file | awk -F: "FNR == $curi { $rang }")
-    output
-}
-
-function output {
     bat -n --color=always $bata $file
 }
 
-function update {
-    tput cup 0 0
-    output | sed "s#\$#$(tput el)#"
-    tput ed
+function preview {
+    [[ $file != $1 ]] && reinit "$@"
+    next
 }
 
 function get {
@@ -39,25 +33,20 @@ function get {
     echo $line
 }
 
-function mainLoop {
-    exec {ctrlOutFd}>$outfifo
-    while read cmd args; do
-        case $cmd in
-            "init") init $args ;;
-            "next") next ;;
-            "preview") output >&$ctrlOutFd; break ;;
-            "get") get >&$ctrlOutFd; break ;;
-            *) echo OpGrepServer does not recognize command $cmd ;;
-        esac
-    done
-    exec {ctrlOutFd}>&-
-}
-
 mkfifo $infifo
 mkfifo $outfifo
-nc -kUl $socket >$infifo <$outfifo &
-ncPid=$!
 
-mainLoop <$infifo
-
-kill $ncPid
+while [[ -z $handledGet ]]; do
+    nc -Ul $socket >$infifo <$outfifo &
+    exec {ifd}<$infifo
+    exec {ofd}>$outfifo
+    read -u $ifd cmd args
+    case $cmd in
+        "preview") preview $args >&$ofd ;;
+        "get") get >&$ofd; handledGet="sure did" ;;
+        *) echo OpGrepServer does not recognize command $cmd >&$ofd ;;
+    esac
+    exec {ifd}<&-
+    exec {ofd}>&-
+    rm $socket
+done
