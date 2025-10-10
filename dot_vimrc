@@ -60,7 +60,8 @@ set background=dark
 hi! link StatusLine CursorLineNr
 hi! link StatusLineTerm StatusLine
 hi! link StatusLineTermNC StatusLineNC
-let &laststatus=2
+set laststatus=2
+set hls
 hi normal ctermfg=NONE ctermbg=NONE
 
 let g:EasyMotion_do_mapping = 0
