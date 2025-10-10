@@ -1,10 +1,7 @@
-let g:opFileServer = job_start([$HOME.."/.sh/OpFileServer"])
-let g:opFileRequest = $HOME.."/.sh/Request "..ch_readraw(g:opFileServer)
 let s:source = "'find . -path ./.git -prune -or \"(\" -type f -or -type l \")\" -and ! -name *.swp -print | sed s#^\\./##'"
-let s:preview = "'"..g:opFileRequest.." preview'"
-let s:bindFocus = "'--bind', 'focus:execute-silent("..g:opFileRequest.." init {} $FZF_PREVIEW_COLUMNS $FZF_PREVIEW_LINES)+refresh-preview'"
+let s:preview = "'bat -n'"
 let s:bindClearQuery = "'--bind', 'ctrl-l:clear-query'"
-let s:options = "['--preview', "..s:preview..", "..s:bindFocus..", "..s:bindClearQuery.."]"
+let s:options = "['--preview', "..s:preview..", "..s:bindClearQuery.."]"
 exe "command OpFile call fzf#run(fzf#wrap({'source': " s:source ",'options':" s:options ", 'sink': 'edit'}))"
 
 let s:source = "'git log --format=''%h %an %ar: %s'' -- '..expand('%')"
@@ -15,19 +12,21 @@ let s:bindPreviewUpDown = "'--bind', 'ctrl-u:preview-half-page-up', '--bind', 'c
 let s:options = "['--preview', "..s:preview..", '--preview-window', "..s:previewWindow..", "..s:bindPreviewUpDown.."]"
 exe "command OpGitLog call fzf#run(fzf#wrap({'source': " s:source ", 'options':" s:options "}))"
 
-let g:opGrepServer = job_start([$HOME.."/.sh/OpGrepServer"])
-let g:opGrepRequest = $HOME.."/.sh/Request "..ch_readraw(g:opGrepServer)
+let s:opGrepFile = $HOME.."/.sh/run/"..getpid()..".vim.grep.file"
+let s:opGrepSocket = $HOME.."/.sh/run/"..getpid()..".vim.grep.socket"
+let g:opGrepServer = job_start([$HOME.."/.sh/OpGrepPreviewServer", s:opGrepFile, s:opGrepSocket])
+let s:opGrepRequest = $HOME.."/.sh/RequestSend "..s:opGrepSocket
 function! OpGrepSink(selected)
-    let l:num = system(g:opGrepRequest.." getSelectedLineNumber")
+    let l:num = ch_evalraw(ch_open("unix:"..s:opGrepSocket), "get\n")
     let l:file = split(a:selected, ":")[0]
     exe "edit +"..l:num.." "..l:file
 endfunction
 let s:source = "'ag -cU <args>'"
-let s:preview = "'"..g:opGrepRequest.." preview'"
-let s:bindInit = "'--bind', 'focus:execute-silent("..g:opGrepRequest.." init {1} $FZF_PREVIEW_LINES <args>)+refresh-preview'"
-let s:bindNext = "'--bind', 'ctrl-n:execute-silent("..g:opGrepRequest.." next)+refresh-preview'"
+let s:preview = "'tail -f "..s:opGrepFile.."'"
+let s:bindInit = "'--bind', 'focus:execute-silent:"..s:opGrepRequest.." init {1} $FZF_PREVIEW_LINES <q-args>'"
+let s:bindNext = "'--bind', 'ctrl-n:execute-silent("..s:opGrepRequest.." next)+refresh-preview'"
 let s:options = "['-d', ':', '--nth', '1', '--preview', "..s:preview..", "..s:bindInit..", "..s:bindNext.."]"
-exe "command -nargs=+ OpGrep call fzf#run(fzf#wrap({'source': " s:source ", 'options':" s:options ", 'sink': function('OpGrepSink')}))"
+exe "command -nargs=+ OpGrep call writefile([], '"..s:opGrepFile.."') | call fzf#run(fzf#wrap({'source': " s:source ", 'options':" s:options ", 'sink': function('OpGrepSink')}))"
 
 function OpGrepWithWordUnderCursor()
     call feedkeys(":OpGrep "..expand("<cword>"))

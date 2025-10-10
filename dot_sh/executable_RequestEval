@@ -1,0 +1,19 @@
+#! /usr/bin/env bash
+rund=$(dirname $0)/run
+mkdir -p $rund
+
+fifo="$rund/$$.fifo"
+mkfifo $fifo
+trap "rm $fifo" EXIT
+
+socket=$1
+shift
+
+exec {requestOut}>&1
+
+function askAndEcho {
+    echo "$1"
+    cat <$fifo >&$requestOut
+}
+
+askAndEcho "$*" | nc -U $socket >$fifo

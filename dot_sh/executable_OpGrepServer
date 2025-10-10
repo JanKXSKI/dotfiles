@@ -3,11 +3,10 @@ rund=$(dirname $0)/run
 mkdir -p $rund
 . ~/.sh/logging.sh "$rund"
 
-mkfifo $rund/$$.fifo
-trap "rm $rund/$$.fifo" EXIT
-
-echo $rund/$$.fifo
-exec {fifofd}<>$rund/$$.fifo
+socket="${1:-$rund/$$.socket}"
+infifo="$rund/$$.in.fifo"
+outfifo="$rund/$$.out.fifo"
+trap "rm $socket; rm $infifo; rm $outfifo" EXIT
 
 function init {
     file=$1
@@ -22,31 +21,43 @@ function next {
     curi=$(($curi % $maxi + 1))
     rang="rmin = \$1 - $cont/2; rmax = \$1 + $cont/2; if (rmin < 1) { rmax -= (rmin - 1); rmin = 1; }  printf \"-r %d:%d -H %d\", rmin, rmax, \$1"
     bata=$(ag --numbers "$agas" $file | awk -F: "FNR == $curi { $rang }")
-    echo "OK"
+    output
 }
 
-function preview {
-    if [[ -z $bata ]]; then
-        echo "Loading preview..."
-        return
-    fi
+function output {
     bat -n --color=always $bata $file
 }
 
-function getSelectedLineNumber {
+function update {
+    tput cup 0 0
+    output | sed "s#\$#$(tput el)#"
+    tput ed
+}
+
+function get {
     line=$(ag --numbers "$agas" $file | awk -F: "FNR == $curi { print \$1 }")
     echo $line
 }
 
-while read -u $fifofd -a arra; do
-    responseFifo="${arra[0]}"
-    cmd=${arra[1]}
-    case $cmd in
-        "init") init "${arra[@]:2}" > "$responseFifo";;
-        "next") next > "$responseFifo";;
-        "preview") preview > "$responseFifo";;
-        "getSelectedLineNumber") getSelectedLineNumber > "$responseFifo";;
-        "shutdown") echo "OK" > "$responseFifo"; exit;;
-        *) echo OpGrepServer does not recognize command $cmd > "$responseFifo";;
-    esac
-done
+function mainLoop {
+    exec {ctrlOutFd}>$outfifo
+    while read cmd args; do
+        case $cmd in
+            "init") init $args ;;
+            "next") next ;;
+            "preview") output >&$ctrlOutFd; break ;;
+            "get") get >&$ctrlOutFd; break ;;
+            *) echo OpGrepServer does not recognize command $cmd ;;
+        esac
+    done
+    exec {ctrlOutFd}>&-
+}
+
+mkfifo $infifo
+mkfifo $outfifo
+nc -kUl $socket >$infifo <$outfifo &
+ncPid=$!
+
+mainLoop <$infifo
+
+kill $ncPid

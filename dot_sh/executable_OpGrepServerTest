@@ -1,8 +1,9 @@
 #! /usr/bin/env bash
-
-rm -f run/log-*
-exec {fd}< <(./OpGrepServer)
-read -u $fd fifo
-./Request $fifo init "OpGrepServer" 10 "function init"
-./Request $fifo preview
-./Request $fifo shutdown
+socket=$1
+function request {
+    echo "init OpGrepServer 10 function" && sleep 1
+    echo "next" && sleep 1
+    echo "next" && sleep 1
+}
+request | nc -U "$socket"
+$(dirname $0)/Request $socket "get"
