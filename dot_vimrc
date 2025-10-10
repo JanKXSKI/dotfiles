@@ -61,7 +61,6 @@ hi! link StatusLine CursorLineNr
 hi! link StatusLineTerm StatusLine
 hi! link StatusLineTermNC StatusLineNC
 set laststatus=2
-set hls
 hi normal ctermfg=NONE ctermbg=NONE
 
 let g:EasyMotion_do_mapping = 0
@@ -70,3 +69,6 @@ map <Leader>t <Plug>(easymotion-bd-t2)
 let g:EasyMotion_smartcase = 1
 
 set sessionoptions = "buffers"
+
+set smartcase
+set hlsearch
