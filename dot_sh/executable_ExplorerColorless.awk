@@ -9,12 +9,12 @@ BEGIN {
 
 {
     if ($2 == 0 && $3 == 0) {
-        print " " $1 " " $5
+        printf("%-*.*s\n", w, w, " " $1 " " $5)
         next
     }
     fs=sprintf("%*s",$2,"")
     gsub(" ",">",fs)
     is=sprintf("%*s",1+($3-1)*2,"")
     se=ses[$4]
-    print fs is se " " $1 " " $5
+    printf("%-*.*s\n", w, w, fs is se " " $1 " " $5)
 }

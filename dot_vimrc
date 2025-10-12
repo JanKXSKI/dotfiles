@@ -74,3 +74,4 @@ set sessionoptions = "buffers"
 set ignorecase
 set smartcase
 set hlsearch
+hi! CurSearch ctermbg=226 ctermfg=black

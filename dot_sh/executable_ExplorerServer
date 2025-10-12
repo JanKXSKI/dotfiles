@@ -16,8 +16,9 @@ function previewWithPath {
         echo "Explorer not yet initialized..."
         return
     fi
-    tput clear
+    tput cup 0 0
     $(dirname $0)/Explorer $1 $width $height
+    tput ed
 }
 
 function mainLoop {

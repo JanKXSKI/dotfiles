@@ -21,3 +21,4 @@ packages:
     - tree
     - the_silver_searcher
     - coreutils
+    - gawk
