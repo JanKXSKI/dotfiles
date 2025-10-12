@@ -27,7 +27,7 @@ mkfifo "$rund/$$.fifo"
 side=20
 bot=7
 
-tmux -2 split-window -hdP -l $((2 * $side + 2)) -F "#{pane_index} #{pane_pid} #{pane_height}" "~/.sh/ExplorerServer" >"$rund/$$.fifo" &
+tmux -2 split-window -hdP -l $((2 * $side)) -F "#{pane_index} #{pane_pid} #{pane_height}" "~/.sh/ExplorerServer" >"$rund/$$.fifo" &
 read explorerPaneId explorerServerPid h <"$rund/$$.fifo"
 explorerServerSocket="$rund/$explorerServerPid.socket"
 explorerWidth=$side

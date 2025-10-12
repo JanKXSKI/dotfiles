@@ -5,7 +5,8 @@ mkdir -p "$rund"
 . ~/.sh/logging.sh "$rund"
 
 path=$1
-height=$2
+width=$2
+height=$3
 
 function filteredLs {
     ls -pA1 $1 | grep -v -e ".swp$" -e "^Session.vim$"
@@ -13,12 +14,12 @@ function filteredLs {
 
 function toNeedle {
     sed\
-        -e "\\:^$1$: { s:.*:$2 $3 $4 &:; q; }"\
-        -e "s:.*:$2 $3 1 &:"
+        -e "\\:^$1$: { s:.*:$2 $3 $4 \\:&:; q; }"\
+        -e "s:.*:$2 $3 1 \\:&:"
 }
 
 function afterNeedle {
-    sed -e "1,\\:^$1$: d" -e "s:.*:$2 $3 0 &:"
+    sed -e "1,\\:^$1$: d" -e "s:.*:$2 $3 0 \\:&:"
 }
 
 function irRec {
@@ -42,67 +43,68 @@ function ir {
     echo $path | sed 's#/#/\n#g' | irRec '.'
 }
 
+function irWithHeightApplied {
+    tmpf="$rund/$$.tmp"
+    ir > "$tmpf"
+    pat='/^[0-9] [0-9] 3/'
+    coun="$pat { printf(\"%d \", NR) } END { print NR }"
+    read line tota < <(awk "$coun" "$tmpf")
+    context=$(($height/2))
+    if [[ $line -lt $context ]]; then
+        cat $tmpf | head -n $height
+    elif [[ $(($tota - $line)) -lt $context ]]; then
+        cat $tmpf | tail -n $height
+    else
+        f=$(($line - $context))
+        t=$(($line + $context))
+        cat $tmpf | sed -n -e "$f,$t p" -e "$((t + 1)) q"
+    fi 
+    rm $tmpf
+}
+
+sedi='\\:^[0-9] [0-9] [01] " $1 "\$:'
+seda='\\:^[0-9] [0-9] [23] " $1 "\$:'
+
 function sedAddIcons {
-    i='\\:^[0-9] [0-9] [01] " $1 "\$:'
-    a='\\:^[0-9] [0-9] [23] " $1 "\$:'
     si='s:.*:" $2 " &:'
     sa='s:.*:" $3 " &:'
     cat $(dirname $0)/ExplorerIcons.txt |\
-        awk "{ printf \"$i $si\\n$a $sa\\n\" }"
+        awk "{ printf \"$sedi $si\\n$seda $sa\\n\" }"
 }
 
 function addIcons {
     sed -f <(sedAddIcons)
 }
 
-ir | addIcons
+function colorless {
+    addIcons\
+        | awk -f $(dirname $0)/ExplorerColorless.awk\
+        | cut -c 1-$width
+}
+
+function sedGetColors {
+    si='s:.*:" $4 ":'
+    sa='s:.*:" $5 ":'
+    cat $(dirname $0)/ExplorerIcons.txt |\
+        awk "{ printf \"$sedi $si\\n$seda $sa\\n\" }"
+}
+
+function getColors {
+    sed -f <(sedGetColors)
+}
+
+function colorAnnotated {
+    paste -d ":" <(getColors <"$1") <(colorless <"$1")
+}
+
+function applyColor {
+    awk -F":" '{ gsub(/^>*[ ]*[│╰]? /, "&"$1, $2); print $2 "\033[0m" $3 }'
+}
+
+irf="$rund/$$.ir.tmp"
+irWithHeightApplied >"$irf"
+colorAnnotated "$irf" | applyColor
+rm "$irf"
 exit
 
 echo '{ print "\033[48;5;237m" $0 "\033[0m" }'
-
-function getIconSedProgram {
-    iconIndex=$(($1 + 1))
-    beforeChar="$2"
-    pattern='/^"$1"\$/'
-    program="{ print \"$pattern { s#.*#$beforeChar\"\$$iconIndex\"$(tput sgr0) &#; p; d; }\" }"
-    cat $(dirname $0)/ExplorerIcons.txt | awk "$program" | tee DEBUG$1.txt
-}
-
-function highlightLastLine {
-    sed -e '$!{p;d;}' -f <(getIconSedProgram 2 "$1")
-}
-
-function printToNeedle {
-    need=$1
-    levl=$2
-    toNeedle='$0==n { found=1 } 1 { print $0; if (found) exit }'
-    if [[ $levl -eq 0 ]]; then
-        nop=" "
-        nep=" "
-    else
-        nop="│"
-        nep="╰"
-    fi
-    awk -v n="$need" "$toNeedle" | sed -e '${p;d;}' -f <(getIconSedProgram 1 "$nop") | highlightLastLine "$nep"
-}
-
-function printToEnd {
-    need=$1
-    levl=$2
-    prin='BEGIN { i=sprintf("%*s", l+2, "") } 1 { if (p) print i $0 } $0==n { p=1 }'
-    awk -v n=$need -v l="$levl" "$prin"
-}
-
-context=$(($height / 2))
-before=$(wc -l < $out1)
-after=$(wc -l < $out2)
-if [[ $context -lt $after ]]; then
-    after=$context
-fi
-if [[ $context -gt $before ]]; then
-    after=$(($after + ($context - $before)))
-else
-    before=$(($context + $height % 2))
-fi
-[[ $before -gt 0 ]] && tail -n $before $out1
-[[ $after -gt 0 ]] && head -n $after $out2

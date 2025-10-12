@@ -3,6 +3,7 @@ set rtp+=/opt/homebrew/opt/fzf
 syntax enable
 
 inoremap jj <Esc>
+nnoremap <C-S> :w <CR>
 nnoremap <C-H> <C-W>h
 nnoremap <C-S-H> <C-W>h
 nnoremap <C-J> <C-W>j
