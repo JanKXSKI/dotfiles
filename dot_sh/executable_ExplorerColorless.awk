@@ -14,7 +14,7 @@ BEGIN {
     }
     fs=sprintf("%*s",$2,"")
     gsub(" ",">",fs)
-    is=sprintf("%*s",$3*2,"")
+    is=sprintf("%*s",1+($3-1)*2,"")
     se=ses[$4]
     print fs is se " " $1 " " $5
 }
