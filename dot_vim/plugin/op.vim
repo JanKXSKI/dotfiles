@@ -1,15 +1,17 @@
-let s:source = "'find . -path ./.git -prune -or \"(\" -type f -or -type l \")\" -and ! -name *.swp -print | sed s#^\\./##'"
-let s:preview = "'bat -n'"
+let s:bindPreviewUpDown = "'--bind', 'ctrl-u:preview-half-page-up', '--bind', 'ctrl-d:preview-half-page-down'"
 let s:bindClearQuery = "'--bind', 'ctrl-l:clear-query'"
-let s:options = "['--preview', "..s:preview..", "..s:bindClearQuery.."]"
+let s:defaultBinds = s:bindPreviewUpDown..", "..s:bindClearQuery
+
+let s:source = "'find . -path ./.git -prune -or \"(\" -type f -or -type l \")\" -and ! -name *.swp -print | sed s#^\\./##'"
+let s:preview = "'bat -n --color=always {}'"
+let s:options = "['--preview', "..s:preview..", "..s:defaultBinds.."]"
 exe "command OpFile call fzf#run(fzf#wrap({'source': " s:source ",'options':" s:options ", 'sink': 'edit'}))"
 
 let s:source = "'git log --format=''%h %an %ar: %s'' -- '..expand('%')"
 let s:previewGit = "'echo {} | awk ''{print $1}'' | xargs -I{} git show {}:'..expand('%')"
 let s:preview = s:previewGit.."..' | bat -n --color=always -l='..split(expand('%:t'), '\\.')[-1]"
 let s:previewWindow = "'+'..line('w0')"
-let s:bindPreviewUpDown = "'--bind', 'ctrl-u:preview-half-page-up', '--bind', 'ctrl-d:preview-half-page-down'"
-let s:options = "['--preview', "..s:preview..", '--preview-window', "..s:previewWindow..", "..s:bindPreviewUpDown.."]"
+let s:options = "['--preview', "..s:preview..", '--preview-window', "..s:previewWindow..", "..s:defaultBinds.."]"
 exe "command OpGitLog call fzf#run(fzf#wrap({'source': " s:source ", 'options':" s:options "}))"
 
 let s:opGrepSocket = $HOME.."/.sh/run/"..getpid()..".vim.grep.socket"
@@ -24,7 +26,7 @@ endfunction
 let s:source = "'ag -cU <args>'"
 let s:preview = "'"..$HOME.."/.sh/RequestEvalRetry "..s:opGrepSocket.." preview {1} $FZF_PREVIEW_LINES <q-args>'"
 let s:bindNext = "'--bind', 'ctrl-n:refresh-preview'"
-let s:options = "['-d', ':', '--nth', '1', '--preview', "..s:preview..", "..s:bindNext.."]"
+let s:options = "['-d', ':', '--nth', '1', '--preview', "..s:preview..", "..s:bindNext..", "..s:bindClearQuery.."]"
 exe "command -nargs=+ OpGrep call fzf#run(fzf#wrap({'source': " s:source ", 'options':" s:options ", 'sink': function('OpGrepSink')}))"
 
 function OpGrepWithWordUnderCursor()
@@ -46,5 +48,6 @@ if exists("g:codeSessionsFile")
         endtry
     endfunction
     let s:source = "'cat "..g:codeSessionsFile.."'"
-    exe "command OpSession call fzf#run(fzf#wrap({'source': " s:source ", 'sink': function('OpenCodeSession')}))"
+    let s:options = "["..s:bindClearQuery.."]"
+    exe "command OpSession call fzf#run(fzf#wrap({'source': " s:source ", 'options':" s:options ", 'sink': function('OpenCodeSession')}))"
 endif

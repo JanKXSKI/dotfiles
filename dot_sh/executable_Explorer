@@ -5,33 +5,85 @@ mkdir -p "$rund"
 . ~/.sh/logging.sh "$rund"
 
 path=$1
-width=$2
-height=$3
-
-out1="$rund/$$.1.tmp"
-out2="$rund/$$.2.tmp"
-out3="$rund/$$.3.tmp"
-touch $out1
-touch $out2
-touch $out3
-trap "rm $out1; rm $out2; rm $out3" EXIT
+height=$2
 
 function filteredLs {
     ls -pA1 $1 | grep -v -e ".swp$" -e "^Session.vim$"
 }
 
+function toNeedle {
+    sed\
+        -e "\\:^$1$: { s:.*:$2 $3 $4 &:; q; }"\
+        -e "s:.*:$2 $3 1 &:"
+}
+
+function afterNeedle {
+    sed -e "1,\\:^$1$: d" -e "s:.*:$2 $3 0 &:"
+}
+
+function irRec {
+    local dir=$1
+    local levr="${2:-0}"
+    local foll=$(($levr/5))
+    local levl=$(($levr%5))
+    local next;
+    local selt;
+    if read next; then
+        [[ $next == */ ]] && selt=2 || selt=3
+        filteredLs $dir | toNeedle $next $foll $levl $selt
+        if [[ $selt == 2 ]]; then
+            irRec "$dir/${next%/}" $(($levr + 1))
+        fi
+        filteredLs $dir | afterNeedle $next $foll $levl
+    fi
+}
+
+function ir {
+    echo $path | sed 's#/#/\n#g' | irRec '.'
+}
+
+function sedAddIcons {
+    i='\\:^[0-9] [0-9] [01] " $1 "\$:'
+    a='\\:^[0-9] [0-9] [23] " $1 "\$:'
+    si='s:.*:" $2 " &:'
+    sa='s:.*:" $3 " &:'
+    cat $(dirname $0)/ExplorerIcons.txt |\
+        awk "{ printf \"$i $si\\n$a $sa\\n\" }"
+}
+
+function addIcons {
+    sed -f <(sedAddIcons)
+}
+
+ir | addIcons
+exit
+
+echo '{ print "\033[48;5;237m" $0 "\033[0m" }'
+
+function getIconSedProgram {
+    iconIndex=$(($1 + 1))
+    beforeChar="$2"
+    pattern='/^"$1"\$/'
+    program="{ print \"$pattern { s#.*#$beforeChar\"\$$iconIndex\"$(tput sgr0) &#; p; d; }\" }"
+    cat $(dirname $0)/ExplorerIcons.txt | awk "$program" | tee DEBUG$1.txt
+}
+
+function highlightLastLine {
+    sed -e '$!{p;d;}' -f <(getIconSedProgram 2 "$1")
+}
+
 function printToNeedle {
     need=$1
     levl=$2
+    toNeedle='$0==n { found=1 } 1 { print $0; if (found) exit }'
     if [[ $levl -eq 0 ]]; then
-        nop="  "
-        nep=" •"
+        nop=" "
+        nep=" "
     else
-        nop="│ "
-        nep="╰•"
+        nop="│"
+        nep="╰"
     fi
-    prin='$0==n { s=e; h=sprintf("%*s",w,"") } 1 { i=l>0?sprintf("%*s", l, ""):""; print i s $0 h; if (s!=o) exit }'
-    awk -v n=$need -v s="$nop" -v e="$nep" -v o="$nop" -v l=$levl -v w=$width "$prin"
+    awk -v n="$need" "$toNeedle" | sed -e '${p;d;}' -f <(getIconSedProgram 1 "$nop") | highlightLastLine "$nep"
 }
 
 function printToEnd {
@@ -41,30 +93,6 @@ function printToEnd {
     awk -v n=$need -v l="$levl" "$prin"
 }
 
-function fillOut {
-    dir=$1
-    printer=$2
-    out=$3
-}
-
-function previewRec {
-    local dir=$1
-    local levl="${2:-0}"
-    local next;
-    if read next; then
-        filteredLs $dir | printToNeedle $next $levl | cut -c 1-$width > $out3
-        if [[ $next == */ ]]; then
-            cat $out3 >> $out1
-            previewRec "$dir/${next%/}" $(($levl + 1)) 
-        else
-            cat $out3 | sed '$d' >> $out1
-            tail -n 1 $out3 | awk '{ print "\033[48;5;237m" $0 "\033[0m" }' >> $out1
-        fi
-        filteredLs $dir | printToEnd $next $levl | cut -c 1-$width >> $out2
-    fi
-}
-
-echo $path | sed 's#/#/\n#g' | previewRec '.'
 context=$(($height / 2))
 before=$(wc -l < $out1)
 after=$(wc -l < $out2)
