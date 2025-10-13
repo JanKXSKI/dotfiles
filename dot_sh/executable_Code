@@ -5,7 +5,8 @@ mkdir -p "$rund"
 . ~/.sh/logging.sh "$rund"
 
 if ! tmux has-session 2>/dev/null; then
-    tmux -2 new "$0 $*"
+    tmux -2 new "$0 ':here:' '$$' $*"
+    tmux wait "$$"
     exit
 fi
 
