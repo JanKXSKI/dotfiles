@@ -54,6 +54,20 @@ function! CodeOnFileRefresh()
     call CodeOnAnyWindowScrolled()
 endfunction
 
+if exists("g:codeSessionsFile")
+    function! CodeCloseWithNext(nextSessionPath)
+        if !g:codeAutocommandsEnabled
+            return
+        endif
+        call system($HOME.."/.sh/WriteLeastRecentlyUsed "..g:codeSessionsFile.." "..a:nextSessionPath)
+        let l:vimSessionsDir = fnamemodify(g:codeSessionsFile, ":p:h").."/vim-sessions"
+        call mkdir(l:vimSessionsDir, "p")
+        exe "mksession! "..l:vimSessionsDir.."/"..fnamemodify(getcwd(), ":gs#/#ESCAPED_SLASH#")..".vim"
+    endfunction
+
+    autocmd VimLeave * call CodeCloseWithNext(getcwd())
+endif
+
 autocmd WinScrolled * call CodeOnAnyWindowScrolled()
 autocmd BufWritePost * call CodeOnFileRefresh()
 autocmd BufEnter * call CodeOnFileRefresh()

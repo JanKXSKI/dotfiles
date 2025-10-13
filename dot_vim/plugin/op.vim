@@ -40,10 +40,8 @@ if exists("g:codeSessionsFile")
             wincmd J
             echoe "Cannot leave here, buffer has changes."
         catch /No modified buffer/
-            call system($HOME.."/.sh/WriteLeastRecentlyUsed "..g:codeSessionsFile.." "..a:selected)
-            let l:vimSessionsDir = fnamemodify(g:codeSessionsFile, ":p:h").."/vim-sessions"
-            call mkdir(l:vimSessionsDir, "p")
-            exe "mksession! "..l:vimSessionsDir.."/"..fnamemodify(getcwd(), ":gs#/#ESCAPED_SLASH#")..".vim"
+            call CodeCloseWithNext(a:selected)
+            let g:codeAutocommandsEnabled = 0
             qa
         endtry
     endfunction
