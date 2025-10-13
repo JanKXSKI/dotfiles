@@ -13,7 +13,6 @@ function init {
 
 function previewWithPath {
     if [[ -z $height ]]; then
-        echo "Explorer not yet initialized..."
         return
     fi
     tput cup 0 0

@@ -7,6 +7,7 @@ let g:codeAutocommandsEnabled = 1
 
 let g:codeExplorerChannel = ch_open("unix:"..g:codeExplorerServerSocket)
 call ch_sendraw(g:codeExplorerChannel, "init "..g:codeExplorerWidth.. " "..g:codeExplorerHeight.."\n")
+call ch_sendraw(g:codeExplorerChannel, "previewWithPath .\n")
 
 let g:codeMinimapChannel = ch_open("unix:"..g:codeMinimapServerSocket)
 let g:codeMinimapRangeFrom = 0

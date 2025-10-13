@@ -84,7 +84,6 @@ function mapDo {
 
 function previewWithRange {
     if [[ -z $height || -z $scale ]]; then
-        echo "Minimap not yet initialized..."
         return
     fi
     newFrom=$(mapDo $1)
