@@ -9,14 +9,6 @@ trap "rm $socket; rm '$rund/$$.tmp'" EXIT
 
 export TERM=xterm-256color
 
-function storeMap {
-    lines=$(wc -l <$path)
-    scale=$(echo "s = $((($height - 1) * 4)) / $lines; if (s > 1) s = 1; s" | bc -l)
-    code-minimap --padding $width -V $scale -H 0.3 $path | cut -c 1-$width > "$rund/$$.tmp"
-    from=0
-    to=0
-}
-
 function init {
     width=$1
     height=$2
@@ -26,9 +18,16 @@ function init {
 
 function setPath {
     path=$1
-    storeMap
-    tput clear
-    cat "$rund/$$.tmp"
+    lines=$(wc -l <$path)
+    scale=$(echo "s = $((($height - 1) * 4)) / $lines; if (s > 1) s = 1; s" | bc -l)
+    tput cup 0 0
+    code-minimap --padding $width -V $scale -H 0.3 $path\
+        | cut -c 1-$width\
+        | tee "$rund/$$.tmp"\
+        | awk -v d=$(tput el) '{ print $0 d }'
+    tput ed
+    from=0
+    to=0
 }
 
 function keyDo {
