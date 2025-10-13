@@ -21,7 +21,7 @@ function setPath {
     lines=$(wc -l <$path)
     scale=$(echo "s = $((($height - 1) * 4)) / $lines; if (s > 1) s = 1; s" | bc -l)
     tput cup 0 0
-    code-minimap --padding $width -V $scale -H 0.3 $path\
+    code-minimap --padding $width -V $scale -H 0.2 $path\
         | cut -c 1-$width\
         | tee "$rund/$$.tmp"\
         | awk -v d=$(tput el) '{ print $0 d }'

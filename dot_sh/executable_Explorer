@@ -19,7 +19,7 @@ function toNeedle {
 }
 
 function afterNeedle {
-    sed -e "1,\\:^$1$: d" -e "s:.*:$2 $3 0 \\:&:"
+    sed -e "0,\\:^$1$: d" -e "s:.*:$2 $3 0 \\:&:"
 }
 
 function irRec {
@@ -45,7 +45,7 @@ function ir {
 
 function irWithHeightApplied {
     tmpf="$rund/$$.tmp"
-    ir > "$tmpf"
+    ir >"$tmpf"
     pat='/^[0-9] [0-9] 3/'
     coun="$pat { printf(\"%d \", NR) } END { print NR }"
     read line tota < <(awk "$coun" "$tmpf")
