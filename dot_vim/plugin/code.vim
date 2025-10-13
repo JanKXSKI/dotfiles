@@ -14,7 +14,7 @@ let g:codeMinimapRangeFrom = 0
 let g:codeMinimapRangeTo = 0
 call ch_sendraw(g:codeMinimapChannel, "init "..g:codeMinimapWidth.." "..g:codeMinimapHeight.."\n")
 
-function! CodeOnFileOpened(newPath)
+function! CodeOnFileOpened(newPath, reload)
     if !g:codeAutocommandsEnabled
         return
     endif
@@ -22,13 +22,11 @@ function! CodeOnFileOpened(newPath)
         return
     endif
     let l:relativePath = fnamemodify(a:newPath, ":.") 
-    if l:relativePath[0] == "/" || !filereadable(l:relativePath) || l:relativePath == g:codeCurrentRelativePath
+    if l:relativePath[0] == "/" || !filereadable(l:relativePath) || (!a:reload && l:relativePath == g:codeCurrentRelativePath)
         return
     endif
     call ch_sendraw(g:codeExplorerChannel, "previewWithPath "..l:relativePath.."\n")
-    call ch_sendraw(g:codeMinimapChannel, "setPath "..l:relativePath.."\n")
-    let g:codeMinimapRangeFrom = 0
-    let g:codeMinimapRangeTo = 0
+    call ch_sendraw(g:codeMinimapChannel, "setPath "..l:relativePath.." "..g:codeMinimapRangeFrom.." "..g:codeMinimapRangeTo .."\n")
     let g:codeCurrentRelativePath = l:relativePath
 endfunction
 
@@ -50,7 +48,7 @@ function! CodeOnAnyWindowScrolled()
 endfunction
 
 function! CodeOnFileRefresh()
-    call CodeOnFileOpened(expand("%"))
+    call CodeOnFileOpened(expand("%"), 0)
     call CodeOnAnyWindowScrolled()
 endfunction
 
@@ -69,5 +67,5 @@ if exists("g:codeSessionsFile")
 endif
 
 autocmd WinScrolled * call CodeOnAnyWindowScrolled()
-autocmd BufWritePost * call CodeOnFileRefresh()
+autocmd BufWritePost * call CodeOnFileOpened(expand("%"), 1)
 autocmd BufEnter * call CodeOnFileRefresh()

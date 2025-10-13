@@ -16,7 +16,8 @@ function previewWithPath {
         return
     fi
     tput cup 0 0
-    $(dirname $0)/Explorer $1 $width $height
+    $(dirname $0)/Explorer $1 $width $height\
+        | awk -v c=$(tput el) 'NR == 1 { printf("%s%s",$0,c) } NR > 1 { printf("\n%s%s",$0,c) }'
     tput ed
 }
 

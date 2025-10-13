@@ -20,5 +20,5 @@ packages:
     - tmux
     - tree
     - the_silver_searcher
-    - coreutils
     - gawk
+    - gsed
