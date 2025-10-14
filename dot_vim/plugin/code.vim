@@ -63,7 +63,7 @@ if exists("g:codeSessionsFile")
         exe "mksession! "..l:vimSessionsDir.."/"..fnamemodify(getcwd(), ":gs#/#ESCAPED_SLASH#")..".vim"
     endfunction
 
-    autocmd VimLeave * call CodeCloseWithNext(getcwd())
+    autocmd VimLeave * call CodeCloseWithNext(g:codeCurrentSession)
 endif
 
 autocmd WinScrolled * call CodeOnAnyWindowScrolled()

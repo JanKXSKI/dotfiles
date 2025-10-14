@@ -53,6 +53,7 @@ sessionVim="$(dirname $sess)/vim-sessions/$(pwd | sed 's#/#ESCAPED_SLASH#g').vim
 [[ -e $sessionVim ]] && sessionOption="-S $sessionVim"
 vim $sessionOption \
     --cmd "let g:codeSessionsFile=\"$sess\""\
+    --cmd "let g:codeCurrentSession=\"$(tail -n 1 $sess)\""\
     --cmd "let g:codeExplorerWidth=\"$explorerWidth\""\
     --cmd "let g:codeExplorerHeight=\"$explorerHeight\""\
     --cmd "let g:codeExplorerServerSocket=\"$explorerServerSocket\""\

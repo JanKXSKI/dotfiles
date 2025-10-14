@@ -4,7 +4,9 @@ rund=$(dirname $0)/run
 mkdir -p "$rund"
 . ~/.sh/logging.sh "$rund"
 
-sessionLocation="${1:-$(pwd)}"
+sessionLocation="$1"
+[[ -z "$sessionLocation" && -e "$rund/sessions" ]] && sessionLocation=$(tail -n 1 "$rund/sessions")
+[[ -z "$sessionLocation" ]] && sessionLocation=$(pwd)
 
 function launch {
     remote="${1%:*}"
