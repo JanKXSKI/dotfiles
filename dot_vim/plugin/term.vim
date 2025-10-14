@@ -1,5 +1,9 @@
-function! AddOrFocusTerminal()
-    let l:terminals = filter(getbufinfo(), "fnamemodify(v:val.name, \":t\")  == \"@codeTerm\"")
+function! ToggleCodeTerminal()
+    if bufname() == "@codeTerm"
+        call HideTerminal()
+        return
+    endif
+    let l:terminals = filter(getbufinfo(), "bufname(v:val.bufnr) == \"@codeTerm\"")
     if !empty(l:terminals)
         if l:terminals[0].hidden
             execute "sb" l:terminals[0].bufnr
