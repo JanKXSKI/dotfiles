@@ -4,7 +4,10 @@ function! AddOrFocusTerminal()
         if l:terminals[0].hidden
             execute "sb" l:terminals[0].bufnr
         else
-            execute l:terminals[0].bufnr.."wincmd w"
+            execute bufwinnr(l:terminals[0].bufnr).."wincmd w"
+        endif
+        if mode() == "n"
+            normal! i
         endif
     else
         term
@@ -14,7 +17,7 @@ function! AddOrFocusTerminal()
 endfunction
 
 function! HideTerminal()
-    if len(getbufinfo()) == 1
+    if len(getbufinfo({'buflisted': 1})) == 1
         hide ene
         return
     endif
