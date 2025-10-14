@@ -32,6 +32,9 @@ function! TerminalNormalModeModifiableForEasymotion()
     hide ene
     silent normal! VpG
     setlocal nomodified
+    setlocal nonumber
+    setlocal nolist
+    normal! z-
     let b:codeBufferHidingTerminalWithBufnr = l:bufnr
 endfunction
 
