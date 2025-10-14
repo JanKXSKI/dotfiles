@@ -11,14 +11,15 @@ sessionLocation="$1"
 function launch {
     remote="${1%:*}"
     if [[ "$remote" != "$1" ]]; then
+        me=$(hostname -f)
         folder=$(ssh "$remote" "realpath '${1#*:}'")
         sesl="$remote:$folder"
         ~/.sh/WriteLeastRecentlyUsed "$rund/sessions" "$sesl"
-        rdir="bin/run/sessions-from/$(hostname -f)"
+        rdir="bin/run/sessions-from/$me"
         rdir=$(ssh "$remote" "mkdir -p '$rdir' && realpath '$rdir'")
         sess="$rdir/sessions"
         scp "$rund/sessions" "$remote:$sess"
-        ssh -t "$remote" "chezmoi update && ~/.sh/Code '$folder' '$sess'"
+        ssh -t "$remote" "chezmoi update && tmux -2 new -s 'Code ${me%%.*}' \"~/.sh/Code :here: '$$' '$folder' '$sess'\""
         scp "$remote:$sess" "$rund/sessions"
     else
         sesl="$(realpath $1)"
