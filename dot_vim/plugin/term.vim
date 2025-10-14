@@ -1,9 +1,9 @@
 function! ToggleCodeTerminal()
-    if bufname() == "@codeTerm"
+    if exists("b:codeBufferType") && b:codeBufferType == "terminal"
         call HideTerminal()
         return
     endif
-    let l:terminals = filter(getbufinfo(), "bufname(v:val.bufnr) == \"@codeTerm\"")
+    let l:terminals = filter(getbufinfo(), "getbufvar(v:val.bufnr, \"codeBufferType\") == \"terminal\"")
     if !empty(l:terminals)
         if l:terminals[0].hidden
             execute "sb" l:terminals[0].bufnr
@@ -15,7 +15,7 @@ function! ToggleCodeTerminal()
         endif
     else
         term
-        keepalt file @codeTerm
+        let b:codeBufferType = "terminal"
     endif
     wincmd J
 endfunction
