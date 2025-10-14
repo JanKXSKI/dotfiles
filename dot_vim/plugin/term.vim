@@ -3,6 +3,9 @@ function! ToggleCodeTerminal()
         call HideTerminal()
         return
     endif
+    if (TrySwitchBackToTerminalFromTerminalMadeModifiable())
+        return
+    endif
     let l:terminals = filter(getbufinfo(), "getbufvar(v:val.bufnr, \"codeBufferType\") == \"terminal\"")
     if !empty(l:terminals)
         if l:terminals[0].hidden
@@ -18,6 +21,35 @@ function! ToggleCodeTerminal()
         let b:codeBufferType = "terminal"
     endif
     wincmd J
+endfunction
+
+function! TerminalNormalModeModifiableForEasymotion()
+    if &buftype != "terminal"
+        return
+    endif
+    let l:bufnr = bufnr()
+    silent % yank
+    hide ene
+    silent normal! VpG
+    setlocal nomodified
+    let b:codeBufferHidingTerminalWithBufnr = l:bufnr
+endfunction
+
+function! TrySwitchBackToTerminalFromTerminalMadeModifiable()
+    if exists("b:codeBufferHidingTerminalWithBufnr")
+        let l:bufnr = bufnr()
+        execute "hide buffer "..b:codeBufferHidingTerminalWithBufnr
+        execute "bdelete! "..l:bufnr
+        return 1
+    endif
+    return 0
+endfunction
+
+function! SwitchBackToTerminalOrInsertMode()
+    if TrySwitchBackToTerminalFromTerminalMadeModifiable()
+        return
+    endif
+    call feedkeys("i", "n")
 endfunction
 
 function! HideTerminal()

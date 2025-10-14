@@ -28,12 +28,13 @@ nnoremap <Leader>g :call OpGrepWithWordUnderCursor() <CR>
 nnoremap <Leader>b :OpGitLog <CR>
 nnoremap <Leader>d :let @d=expand('%:p').':'.line('.') <bar> let @f=expand('%:p') <bar> let @l=line('w0').','.line('w$') <CR>
 nnoremap <Leader>r :OpSession <CR>
-nnoremap <Leader>p :vert :term <CR>
+nnoremap <Leader>p :vertical :terminal <CR>
 
 nnoremap <C-P> :call ToggleCodeTerminal() <CR>
 inoremap <C-P> <Esc> :call ToggleCodeTerminal() <CR>
 tnoremap <C-P> <C-W>: call ToggleCodeTerminal() <CR>
-tnoremap jj <C-W>N <CR>
+tnoremap jj <C-W>: call TerminalNormalModeModifiableForEasymotion() <CR>
+nnoremap i :call SwitchBackToTerminalOrInsertMode() <CR>
 
 set shiftwidth=4 smarttab expandtab
 set listchars=eol:¬,tab:»\ ,trail:~,extends:>,precedes:<,space:⸱
@@ -44,6 +45,9 @@ set number
 
 let &t_Co=256
 let g:gruvbox_contrast_dark="soft"
+
+let g:EasyMotion_do_mapping = 0
+let g:EasyMotion_smartcase = 1
 
 call plug#begin()
 Plug 'junegunn/fzf'
@@ -65,10 +69,8 @@ hi! link StatusLineTermNC StatusLineNC
 set laststatus=2
 hi normal ctermfg=NONE ctermbg=NONE
 
-let g:EasyMotion_do_mapping = 0
 map <Leader>f <Plug>(easymotion-bd-f2)
 map <Leader>t <Plug>(easymotion-bd-t2)
-let g:EasyMotion_smartcase = 1
 
 set sessionoptions = "buffers"
 
