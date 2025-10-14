@@ -36,7 +36,7 @@ explorerServerSocket="$rund/$explorerServerPid.socket"
 explorerHeight=$(($h - $bot - 1))
 while ! [[ -e "$explorerServerSocket" ]]; do sleep 0.1s; done
 
-tmux -2 split-window -dI -t $explorerPaneId -l $bot < <(cat <(tail -n 1 $sess | cut -c 1-$side | xargs printf "\033[48;5;237m%-${side}.${side}s\033[0m") <(tac $sess | head -n $bot | sed '1d' | cut -c 1-$side | xargs -L 1 printf "\n%s"))
+tmux -2 split-window -dI -t $explorerPaneId -l $bot < <(cat <(tail -n 1 $sess | cut -c 1-$side | xargs printf "\033[48;5;237m%-${side}.${side}s\033[0m\033[38;5;245m") <(tac $sess | head -n $bot | sed '1d' | cut -c 1-$side | xargs -L 1 printf "\n%s"))
 
 tmux -2 split-window -hdPb -t $explorerPaneId -l $minimapWidth -F "#{pane_pid} #{pane_width} #{pane_height}" "~/.sh/MinimapServer" >"$rund/$$.fifo" &
 read minimapServerPid minimapWidth minimapHeight <"$rund/$$.fifo"

@@ -84,7 +84,7 @@ function colorless {
 }
 
 function sedGetColors {
-    si='{ s:.*:\\:" $4 ":;p;d; }'
+    si='{ s:.*:\033[38;5;245m\\:" $4 ":;p;d; }'
     sa2='{ s:.*:\\:" $5 ":;p;d; }'
     sa3='{ s:.*:\033[48;5;237m\\:" $5 ":;p;d; }'
     cat $(dirname $0)/ExplorerIcons.txt |\

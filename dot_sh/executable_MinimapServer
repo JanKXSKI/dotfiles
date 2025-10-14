@@ -41,7 +41,7 @@ function keyDo {
 function deleteDo {
     [[ $2 -lt $1 || $1 -lt 1 ]] && return
     tput cup $(($1 - 1)) 0
-    cat "$rund/$$.tmp" | sed -n "$1,$2p"
+    cat "$rund/$$.tmp" | sed -n "$1,$2{s#^#$(tput setaf 245)#;p;}"
 }
 
 function addDo {
