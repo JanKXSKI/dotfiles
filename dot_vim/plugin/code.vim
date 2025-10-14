@@ -26,6 +26,8 @@ function! CodeOnFileOpened(newPath, reload)
         return
     endif
     call ch_sendraw(g:codeExplorerChannel, "previewWithPath "..l:relativePath.."\n")
+    let g:codeMinimapRangeFrom = getpos("w0")[1]
+    let g:codeMinimapRangeTo = getpos("w$")[1]
     call ch_sendraw(g:codeMinimapChannel, "setPath "..l:relativePath.." "..g:codeMinimapRangeFrom.." "..g:codeMinimapRangeTo .."\n")
     let g:codeCurrentRelativePath = l:relativePath
 endfunction

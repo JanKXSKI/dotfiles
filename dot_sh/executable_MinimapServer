@@ -47,7 +47,7 @@ function deleteDo {
 function addDo {
     [[ $2 -lt $1 || $1 -lt 1 ]] && return
     tput cup $(($1 - 1)) 0
-    cat "$rund/$$.tmp" | sed -n "$1,$2{s#^#$(tput setab 237)#;s#\$#$(tput sgr0)#;p;}"
+    cat "$rund/$$.tmp" | sed -n "$1,$2{s#^#$(tput sgr0)$(tput setab 237)#;s#\$#$(tput sgr0)#;p;}"
 }
 
 function caseDo {
