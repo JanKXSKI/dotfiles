@@ -1,28 +1,16 @@
 function! AddOrFocusTerminal()
-    let l:terminals = filter(getbufinfo(), "getbufvar(v:val.bufnr, \"&buftype\") == \"terminal\"")
-    if !empty(filter(copy(l:terminals), "!v:val.hidden"))
-        return
-    endif
-    if bufname() == ''
-        bd
-    endif
+    let l:terminals = filter(getbufinfo(), "fnamemodify(v:val.name, \":t\")  == \"@codeTerm\"")
     if !empty(l:terminals)
-        execute "sb" l:terminals[0].bufnr
+        if l:terminals[0].hidden
+            execute "sb" l:terminals[0].bufnr
+        else
+            execute l:terminals[0].bufnr.."wincmd w"
+        endif
     else
         term
+        keepalt file @codeTerm
     endif
     wincmd J
-endfunction
-
-function! HideTerminalAndReplaceWindowWithBuffer()
-    if &buftype != "terminal"
-        echom "Tried to yank terminal buffer, but not in a terminal."
-        return
-    endif
-    silent % yank
-    hide ene
-    silent normal! VpG
-    setlocal nomodified
 endfunction
 
 function! HideTerminal()
