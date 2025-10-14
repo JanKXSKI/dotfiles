@@ -50,9 +50,9 @@ function irWithHeightApplied {
     coun="$pat { printf(\"%d \", NR) } END { print NR }"
     read line tota < <(awk "$coun" "$tmpf")
     context=$(($height/2))
-    if [[ $line -lt $context ]]; then
+    if [[ $line -le $context ]]; then
         cat $tmpf | head -n $height
-    elif [[ $(($tota - $line)) -lt $context ]]; then
+    elif [[ $(($tota - $line)) -le $context ]]; then
         cat $tmpf | tail -n $height
     else
         f=$(($line - $context))
