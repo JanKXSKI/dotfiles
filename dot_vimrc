@@ -36,6 +36,7 @@ tnoremap <C-P> <C-W>: call ToggleCodeTerminal() <CR>
 tnoremap jj <C-W>: call TerminalNormalModeModifiableForEasymotion() <CR>
 nnoremap i :call SwitchBackToTerminalOrInsertMode() <CR>
 
+set tabstop=4
 set shiftwidth=4 smarttab expandtab
 set listchars=eol:¬,tab:»\ ,trail:~,extends:>,precedes:<,space:⸱
 set list
