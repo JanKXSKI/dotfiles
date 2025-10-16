@@ -43,7 +43,11 @@ read minimapServerPid minimapWidth minimapHeight <"$rund/$$.fifo"
 minimapServerSocket="$rund/$minimapServerPid.socket"
 while ! [[ -e "$minimapServerSocket" ]]; do sleep 0.1s; done 
 
+opGrepServerSocket="$rund/$$.OpGrepServer.socket"
+~/.sh/OpGrepServer "$opGrepServerSocket" &
+
 function cleanup {
+    ~/.sh/RequestSend "$rund/$$.OpGrepServer.socket" shutdown
     rm "$rund/$$.fifo"
     tmux kill-window
 }
@@ -59,6 +63,7 @@ vim $sessionOption \
     --cmd "let g:codeExplorerServerSocket=\"$explorerServerSocket\""\
     --cmd "let g:codeMinimapWidth=\"$minimapWidth\""\
     --cmd "let g:codeMinimapHeight=\"$minimapHeight\""\
-    --cmd "let g:codeMinimapServerSocket=\"$minimapServerSocket\""
+    --cmd "let g:codeMinimapServerSocket=\"$minimapServerSocket\""\
+    --cmd "let g:codeOpGrepServerSocket=\"$opGrepServerSocket\""
 
 tmux wait -S $tmuxSignalToWakeUp

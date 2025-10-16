@@ -14,20 +14,20 @@ let s:previewWindow = "'+'..line('w0')"
 let s:options = "['--preview', "..s:preview..", '--preview-window', "..s:previewWindow..", "..s:defaultBinds.."]"
 exe "command OpGitLog call fzf#run(fzf#wrap({'source': " s:source ", 'options':" s:options "}))"
 
-let s:opGrepSocket = $HOME.."/.sh/run/"..getpid()..".vim.grep.socket"
-let g:opGrepServer = job_start([$HOME.."/.sh/OpGrepServer", s:opGrepSocket])
-function! OpGrepSink(selected)
-    let l:ch = ch_open("unix:"..s:opGrepSocket)
-    let l:num = ch_evalraw(l:ch, "get\n")
-    call ch_close(l:ch)
-    let l:file = split(a:selected, ":")[0]
-    exe "edit +"..l:num.." "..l:file
-endfunction
-let s:source = "'ag -cU <args>'"
-let s:preview = "'"..$HOME.."/.sh/RequestEvalRetry "..s:opGrepSocket.." preview {1} $FZF_PREVIEW_LINES <q-args>'"
-let s:bindNext = "'--bind', 'ctrl-n:refresh-preview'"
-let s:options = "['-d', ':', '--nth', '1', '--preview', "..s:preview..", "..s:bindNext..", "..s:bindClearQuery.."]"
-exe "command -nargs=+ OpGrep call fzf#run(fzf#wrap({'source': " s:source ", 'options':" s:options ", 'sink': function('OpGrepSink')}))"
+if exists("g:codeOpGrepServerSocket")
+    function! OpGrepSink(selected)
+        let l:ch = ch_open("unix:"..g:codeOpGrepServerSocket)
+        let l:num = ch_evalraw(l:ch, "get\n")
+        call ch_close(l:ch)
+        let l:file = split(a:selected, ":")[0]
+        exe "edit +"..l:num.." "..l:file
+    endfunction
+    let s:source = "'ag -cU <args>'"
+    let s:preview = "'bat -n --color=always $("..$HOME.."/.sh/RequestEval "..g:codeOpGrepServerSocket.." preview {1} $FZF_PREVIEW_LINES <q-args>) {1}'"
+    let s:bindNext = "'--bind', 'ctrl-n:refresh-preview'"
+    let s:options = "['-d', ':', '--nth', '1', '--preview', "..s:preview..", "..s:bindNext..", "..s:bindClearQuery.."]"
+    exe "command -nargs=+ OpGrep call fzf#run(fzf#wrap({'source': " s:source ", 'options':" s:options ", 'sink': function('OpGrepSink')}))"
+endif
 
 function OpGrepWithWordUnderCursor()
     call feedkeys(":OpGrep "..expand("<cword>"))
