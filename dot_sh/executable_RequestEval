@@ -13,7 +13,8 @@ exec {requestOut}>&1
 
 function askAndEcho {
     echo "$@"
-    cat <$fifo >&$requestOut
+    read response <$fifo
+    echo "$response" >&$requestOut
 }
 
 askAndEcho "$@" | nc -U $socket >$fifo

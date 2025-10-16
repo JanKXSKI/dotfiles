@@ -8,3 +8,4 @@ $(dirname $0)/RequestEval $socket preview MinimapServer 20 function
 sleep 1
 $(dirname $0)/RequestEval $socket get
 sleep 1
+$(dirname $0)/RequestEval $socket shutdown
