@@ -4,9 +4,11 @@ mkdir -p $rund
 . ~/.sh/logging.sh "$rund"
 
 socket="${1:-$rund/$$.socket}"
-fifo="$rund/$$.fifo"
-mkfifo "$fifo"
-trap "rm $fifo; rm $socket" EXIT
+infifo="$rund/$$.in.fifo"
+outfifo="$rund/$$.out.fifo"
+mkfifo "$infifo"
+mkfifo "$outfifo"
+trap "rm $infifo; rm $outfifo; rm $socket" EXIT
 
 function reinit {
     file=$1
@@ -34,17 +36,19 @@ function get {
 }
 
 function mainLoop {
-    exec {ofd}>"$fifo"
     while true; do
         read cmd args
         case $cmd in
-            "preview") preview $args >&$ofd ;;
-            "get") get >&$ofd ;;
-            "shutdown") break ;;
-            *) echo OpGrepServer does not recognize command $cmd >&$ofd ;;
+            "preview") preview $args >&$ifd ;;
+            "get") get >&$ifd ;;
+            "shutdown") echo "OK" >&$ifd; break ;;
+            *) echo OpGrepServer does not recognize command $cmd >&$ifd ;;
         esac
     done
-    exec {ofd}>&-
 }
 
-nc -kUl $socket <"$fifo" | mainLoop
+nc -kUl $socket <"$infifo" >"$outfifo" &
+ncpid=$!
+exec {ifd}>"$infifo"
+mainLoop <"$outfifo"
+kill $ncpid
