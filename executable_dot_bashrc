@@ -13,7 +13,7 @@ export PATH
 # allow sudo to autocomplete
 complete -cf sudo
 
-PS1='\w \$ '
+PS1='\033[38;5;214m\w \$ \033[0m'
 
 # Aliases
 alias tmux='tmux -2'
