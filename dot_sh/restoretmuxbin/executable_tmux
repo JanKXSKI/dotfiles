@@ -1,0 +1,5 @@
+#! /usr/bin/env bash
+
+toremove="$(dirname $0):"
+export PATH="${PATH/$toremove/}"
+tmux -2 -L default "$@"

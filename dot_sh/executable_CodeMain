@@ -1,0 +1,10 @@
+#! /usr/bin/env bash
+
+rund=$(realpath $(dirname $0))/run
+mkdir -p "$rund"
+. ~/.sh/logging.sh "$rund"
+
+tmuxSocket="/tmp/$$.code.tmux.socket"
+trap "rm $tmuxSocket" EXIT
+tmux -2 -S "$tmuxSocket" new "$(dirname $0)/Code $tmuxSocket $*"
+tmux -2 -S "$tmuxSocket" wait-for "$tmuxSocket"

@@ -4,24 +4,9 @@ rund=$(realpath $(dirname $0))/run
 mkdir -p "$rund"
 . ~/.sh/logging.sh "$rund"
 
-if ! tmux has-session 2>/dev/null; then
-    tmux -2 new "$0 ':here:' '$$' $*"
-    tmux wait "$$"
-    exit
-fi
-
-if [[ $1 != ":here:" ]]; then
-    tmux -2 new-window "$0 ':here:' '$$' $*"
-    tmux wait "$$"
-    exit
-else
-    shift
-    tmuxSignalToWakeUp=$1
-    shift
-fi
-
-cd $1
-sess=$2
+tmuxSocket="$1"
+cd "$2"
+sess="$3"
 
 mkfifo "$rund/$$.fifo"
 
@@ -30,18 +15,16 @@ minimapWidth=15
 side=$(($explorerWidth + $minimapWidth))
 bot=7
 
-tmux -2 split-window -hdP -l $side -F "#{pane_index} #{pane_pid} #{pane_height}" "~/.sh/ExplorerServer" >"$rund/$$.fifo" &
+tmux -2 -S "$tmuxSocket" split-window -hdP -l $side -F "#{pane_index} #{pane_pid} #{pane_height}" "~/.sh/ExplorerServer" >"$rund/$$.fifo" &
 read explorerPaneId explorerServerPid h <"$rund/$$.fifo"
 explorerServerSocket="$rund/$explorerServerPid.socket"
 explorerHeight=$(($h - $bot - 1))
-while ! [[ -e "$explorerServerSocket" ]]; do sleep 0.1s; done
 
-tmux -2 split-window -dI -t $explorerPaneId -l $bot < <(cat <(tail -n 1 $sess | cut -c 1-$side | xargs printf "\033[48;5;237m%-${side}.${side}s\033[0m\033[38;5;245m") <(tac $sess | head -n $bot | sed '1d' | cut -c 1-$side | xargs -L 1 printf "\n%s"))
+tmux -2 -S "$tmuxSocket" split-window -dI -t $explorerPaneId -l $bot < <(cat <(tail -n 1 $sess | cut -c 1-$side | xargs printf "\033[48;5;237m%-${side}.${side}s\033[0m\033[38;5;245m") <(tac $sess | head -n $bot | sed '1d' | cut -c 1-$side | xargs -L 1 printf "\n%s"))
 
-tmux -2 split-window -hdPb -t $explorerPaneId -l $minimapWidth -F "#{pane_pid} #{pane_width} #{pane_height}" "~/.sh/MinimapServer" >"$rund/$$.fifo" &
+tmux -2 -S "$tmuxSocket" split-window -hdPb -t $explorerPaneId -l $minimapWidth -F "#{pane_pid} #{pane_width} #{pane_height}" "~/.sh/MinimapServer" >"$rund/$$.fifo" &
 read minimapServerPid minimapWidth minimapHeight <"$rund/$$.fifo"
 minimapServerSocket="$rund/$minimapServerPid.socket"
-while ! [[ -e "$minimapServerSocket" ]]; do sleep 0.1s; done 
 
 opGrepServerSocket="$rund/$$.OpGrepServer.socket"
 ~/.sh/OpGrepServer "$opGrepServerSocket" &
@@ -49,12 +32,21 @@ opGrepServerSocket="$rund/$$.OpGrepServer.socket"
 function cleanup {
     ~/.sh/RequestSend "$rund/$$.OpGrepServer.socket" shutdown
     rm "$rund/$$.fifo"
-    tmux kill-window
+    tmux -2 -S "$tmuxSocket" kill-window
+    tmux -2 -S "$tmuxSocket" wait-for -S "$tmuxSocket"
 }
 trap cleanup EXIT
 
 sessionVim="$(dirname $sess)/vim-sessions/$(pwd | sed 's#/#ESCAPED_SLASH#g').vim"
 [[ -e $sessionVim ]] && sessionOption="-S $sessionVim"
+
+tmux -2 -S "$tmuxSocket" set -g prefix None
+export PATH="$(dirname $0)/restoretmuxbin:$PATH"
+
+while ! [[ -e "$explorerServerSocket" ]]; do sleep 0.1s; done
+while ! [[ -e "$minimapServerSocket" ]]; do sleep 0.1s; done
+while ! [[ -e "$opGrepServerSocket" ]]; do sleep 0.1s; done
+
 vim $sessionOption \
     --cmd "let g:codeSessionsFile=\"$sess\""\
     --cmd "let g:codeCurrentSession=\"$(tail -n 1 $sess)\""\
@@ -66,4 +58,4 @@ vim $sessionOption \
     --cmd "let g:codeMinimapServerSocket=\"$minimapServerSocket\""\
     --cmd "let g:codeOpGrepServerSocket=\"$opGrepServerSocket\""
 
-tmux wait -S $tmuxSignalToWakeUp
+export PATH="${PATH#*:}

@@ -19,12 +19,12 @@ function launch {
         rdir=$(ssh "$remote" "mkdir -p '$rdir' && realpath '$rdir'")
         sess="$rdir/sessions"
         scp "$rund/sessions" "$remote:$sess"
-        ssh -t "$remote" "chezmoi update && tmux -2 new -s 'Code ${me%%.*}' \"~/.sh/Code :here: '$$' '$folder' '$sess'\""
+        ssh -t "$remote" "chezmoi update && ~/.sh/CodeMain '$folder' '$sess'"
         scp "$remote:$sess" "$rund/sessions"
     else
         sesl="$(realpath $1)"
         ~/.sh/WriteLeastRecentlyUsed "$rund/sessions" "$sesl"
-        ~/.sh/Code "$sesl" "$rund/sessions"
+        ~/.sh/CodeMain "$sesl" "$rund/sessions"
     fi
     next=$(tail -n 1 "$rund/sessions")
     [[ "$next" == "$sesl" ]] && return
