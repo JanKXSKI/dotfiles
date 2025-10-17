@@ -2,7 +2,7 @@ set rtp+=/opt/homebrew/opt/fzf
 
 syntax enable
 
-inoremap ff <Esc>
+inoremap vv <Esc>
 nnoremap <C-S> :w <CR>
 nnoremap <C-H> <C-W>h
 nnoremap <C-S-H> <C-W>h
@@ -33,7 +33,7 @@ nnoremap <Leader>p :vertical :terminal <CR>
 nnoremap <C-P> :call ToggleCodeTerminal() <CR>
 inoremap <C-P> <Esc> :call ToggleCodeTerminal() <CR>
 tnoremap <C-P> <C-W>: call ToggleCodeTerminal() <CR>
-tnoremap ff <C-W>: call TerminalNormalModeModifiableForEasymotion() <CR>
+tnoremap vv <C-W>: call TerminalNormalModeModifiableForEasymotion() <CR>
 nnoremap i :call SwitchBackToTerminalOrInsertMode() <CR>
 
 set tabstop=4
