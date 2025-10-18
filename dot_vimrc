@@ -54,6 +54,7 @@ call plug#begin()
 Plug 'junegunn/fzf'
 Plug 'morhetz/gruvbox'
 Plug 'easymotion/vim-easymotion'
+Plug 'yegappan/lsp'
 call plug#end()
 
 try
