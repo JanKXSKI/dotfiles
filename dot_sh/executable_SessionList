@@ -1,0 +1,8 @@
+#! /usr/bin/env bash
+
+rund=$(realpath $(dirname $0))/run
+mkdir -p "$rund"
+. ~/.sh/logging.sh "$rund"
+
+tac "$1" |
+    awk -v h="$HOME" -v w=$2 -f "$(dirname $0)/SessionList.awk"
