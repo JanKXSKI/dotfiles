@@ -3,9 +3,6 @@ function! ToggleCodeTerminal()
         call HideTerminal()
         return
     endif
-    if (TrySwitchBackToTerminalFromTerminalMadeModifiable())
-        return
-    endif
     let l:terminals = filter(getbufinfo(), "getbufvar(v:val.bufnr, \"codeBufferType\") == \"terminal\"")
     if !empty(l:terminals)
         if l:terminals[0].hidden
@@ -23,36 +20,28 @@ function! ToggleCodeTerminal()
     wincmd J
 endfunction
 
-function! TerminalNormalModeModifiableForEasymotion()
+function! TerminalAwareEasymotionAction(easymotionBinding)
     if &buftype != "terminal"
-        return
+        return "\<Plug>(easymotion-"..a:easymotionBinding..")"
     endif
-    let l:bufnr = bufnr()
+    return ":call TerminalNormalModeAwareEasymotion(\""..a:easymotionBinding.."\") \<CR>"
+endfunction
+
+function! TerminalNormalModeAwareEasymotion(easymotionBinding)
+    let l:termbufnr = bufnr()
+    let l:termline = getpos("w0")[1]
     silent % yank
     hide ene
     silent normal! VpG
-    setlocal nomodified
-    setlocal nonumber
-    setlocal nolist
-    normal! z-
-    let b:codeBufferHidingTerminalWithBufnr = l:bufnr
-endfunction
-
-function! TrySwitchBackToTerminalFromTerminalMadeModifiable()
-    if exists("b:codeBufferHidingTerminalWithBufnr")
-        let l:bufnr = bufnr()
-        execute "hide buffer "..b:codeBufferHidingTerminalWithBufnr
-        execute "bdelete! "..l:bufnr
-        return 1
-    endif
-    return 0
-endfunction
-
-function! SwitchBackToTerminalOrInsertMode()
-    if TrySwitchBackToTerminalFromTerminalMadeModifiable()
-        return
-    endif
-    call feedkeys("i", "n")
+    setlocal nolist nonumber nomodified
+    execute l:termline.."normal! zt"
+    call feedkeys("\<Plug>(easymotion-"..a:easymotionBinding..")", "x!")
+    let l:tempbufnr = bufnr()
+    let l:temppos = getcurpos()
+    execute "hide buffer "..l:termbufnr
+    execute "bdelete! "..l:tempbufnr
+    execute l:termline.."normal! zt"
+    call setpos(".", l:temppos)
 endfunction
 
 function! HideTerminal()
@@ -74,3 +63,5 @@ endfunction
 function! TerminalSensitiveWindowMove(dirKey)
     execute "wincmd" a:dirKey
 endfunction
+
+autocmd TerminalOpen * setlocal nonumber nolist

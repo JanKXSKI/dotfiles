@@ -33,8 +33,7 @@ nnoremap <Leader>p :vertical :terminal <CR>
 nnoremap <C-P> :call ToggleCodeTerminal() <CR>
 inoremap <C-P> <Esc> :call ToggleCodeTerminal() <CR>
 tnoremap <C-P> <C-W>: call ToggleCodeTerminal() <CR>
-tnoremap vv <C-W>: call TerminalNormalModeModifiableForEasymotion() <CR>
-nnoremap i :call SwitchBackToTerminalOrInsertMode() <CR>
+tnoremap vv <C-W>N
 
 set tabstop=4
 set shiftwidth=4 smarttab expandtab
@@ -71,8 +70,8 @@ hi! link StatusLineTermNC StatusLineNC
 set laststatus=2
 hi normal ctermfg=NONE ctermbg=NONE
 
-map <Leader>f <Plug>(easymotion-bd-f2)
-map <Leader>t <Plug>(easymotion-bd-t2)
+map <expr> <Leader>f TerminalAwareEasymotionAction("bd-f2")
+map <expr> <Leader>t TerminalAwareEasymotionAction("bd-t2")
 
 set sessionoptions = "buffers"
 
@@ -85,9 +84,9 @@ let lspOpts = #{autoHighlightDiags: v:true}
 autocmd User LspSetup call LspOptionsSet(lspOpts)
 
 let lspServers = [#{
-	\	  name: 'clang',
-	\	  filetype: ['h', 'c', 'cpp'],
-	\	  path: '/usr/bin/clangd',
-	\	  args: ['--background-index']
-	\ }]
+            \ name: 'clang',
+            \ filetype: ['h', 'c', 'cpp'],
+            \ path: '/usr/bin/clangd',
+            \ args: ['--background-index']
+            \ }]
 autocmd User LspSetup call LspAddServer(lspServers)
