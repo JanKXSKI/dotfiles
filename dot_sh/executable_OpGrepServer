@@ -11,6 +11,7 @@ mkfifo "$outfifo"
 trap "rm $infifo; rm $outfifo; rm $socket" EXIT
 
 function reinit {
+    previewArgs="$*"
     file=$1
     cont=$(($2-2))
     agas="${@:3}"
@@ -26,7 +27,7 @@ function next {
 }
 
 function preview {
-    [[ $file != $1 ]] && reinit "$@"
+    [[ "$previewArgs" != "$*" ]] && reinit "$@"
     next
 }
 

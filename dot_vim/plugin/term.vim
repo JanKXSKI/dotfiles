@@ -64,4 +64,4 @@ function! TerminalSensitiveWindowMove(dirKey)
     execute "wincmd" a:dirKey
 endfunction
 
-autocmd TerminalOpen * setlocal nonumber nolist
+autocmd TerminalWinOpen * setlocal nonumber nolist
