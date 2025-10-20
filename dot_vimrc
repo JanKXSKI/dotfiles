@@ -31,6 +31,7 @@ nnoremap <Leader>b :OpGitLog <CR>
 nnoremap <Leader>d :let @d=expand('%:p').':'.line('.') <bar> let @f=expand('%:p') <bar> let @l=line('w0').','.line('w$') <CR>
 nnoremap <Leader>r :OpSession <CR>
 nnoremap <Leader>p :vertical :terminal <CR>
+nnoremap <Leader>n :LspGotoDefinition <CR>
 
 nnoremap <C-P> :call ToggleCodeTerminal() <CR>
 inoremap <C-P> <Esc> :call ToggleCodeTerminal() <CR>
