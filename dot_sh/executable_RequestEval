@@ -1,6 +1,7 @@
 #! /usr/bin/env bash
 rund=$(dirname $0)/run
 mkdir -p $rund
+. $(dirname $0)/logging.sh "$rund"
 
 fifo="$rund/$$.fifo"
 mkfifo $fifo

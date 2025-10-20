@@ -15,14 +15,14 @@ function reinit {
     file=$1
     cont=$(($2-2))
     agas="${@:3}"
-    maxi=$(ag "$agas" $file | wc -l)
+    maxi=$(ag "${agas[@]}" $file | wc -l)
     curi=0
 }
 
 function next {
     curi=$(($curi % $maxi + 1))
     rang="rmin = \$1 - $cont/2; rmax = \$1 + $cont/2; if (rmin < 1) { rmax -= (rmin - 1); rmin = 1; }  printf \"-r %d:%d -H %d\", rmin, rmax, \$1"
-    bata=$(ag --numbers "$agas" $file | awk -F: "FNR == $curi { $rang }")
+    bata=$(ag --numbers "${agas[@]}" $file | awk -F: "FNR == $curi { $rang }")
     echo "$bata"
 }
 
@@ -32,7 +32,7 @@ function preview {
 }
 
 function get {
-    line=$(ag --numbers "$agas" $file | awk -F: "FNR == $curi { print \$1 }")
+    line=$(ag --numbers "${agas[@]}" $file | awk -F: "FNR == $curi { print \$1 }")
     echo $line
 }
 
