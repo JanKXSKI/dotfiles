@@ -17,7 +17,7 @@ nnoremap gf :hide normal! gF <CR>
 
 let mapleader = " "
 
-nnoremap <Leader><Backspace> :e # <CR>
+nnoremap <Leader><Backspace> :b # <CR>
 
 nnoremap <Leader>h :call TerminalSensitiveWindowMove("H") <CR>
 nnoremap <Leader>j :call TerminalSensitiveWindowMove("J") <CR>
