@@ -13,7 +13,7 @@ nnoremap <C-S-K> <C-W>k
 nnoremap <C-L> <C-W>l
 nnoremap <C-S-L> <C-W>l
 
-nnoremap gf :hide normal! gF <CR>
+nnoremap gf :vertical wincmd F <CR> <bar> :wincmd H <CR>
 
 let mapleader = " "
 
