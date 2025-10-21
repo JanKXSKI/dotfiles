@@ -44,6 +44,7 @@ set shiftwidth=4 smarttab expandtab
 set listchars=eol:¬,tab:»\ ,trail:~,extends:>,precedes:<,space:⸱
 set fillchars=vert:│
 set list
+set display=uhex
 highlight SpecialKey ctermfg=darkgrey
 highlight NonText ctermfg=darkgrey
 set number
