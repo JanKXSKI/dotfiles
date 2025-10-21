@@ -2,8 +2,13 @@ if !exists("g:codeSessionsFile")
     finish
 endif
 
+let g:codeUserWinId = 0
 let g:codeCurrentRelativePath = ""
 let g:codeAutocommandsEnabled = 1
+
+function! CodeShouldRunAuto()
+    return g:codeAutocommandsEnabled && g:codeUserWinId == win_getid()
+endfunction
 
 let g:codeExplorerChannel = ch_open("unix:"..g:codeExplorerServerSocket)
 call ch_sendraw(g:codeExplorerChannel, "init "..g:codeExplorerWidth.. " "..g:codeExplorerHeight.."\n")
@@ -15,7 +20,7 @@ let g:codeMinimapRangeTo = 0
 call ch_sendraw(g:codeMinimapChannel, "init "..g:codeMinimapWidth.." "..g:codeMinimapHeight.."\n")
 
 function! CodeOnFileOpened(newPath, reload)
-    if !g:codeAutocommandsEnabled
+    if !CodeShouldRunAuto()
         return
     endif
     if empty(a:newPath)
@@ -33,7 +38,7 @@ function! CodeOnFileOpened(newPath, reload)
 endfunction
 
 function! CodeOnAnyWindowScrolled()
-    if !g:codeAutocommandsEnabled
+    if !CodeShouldRunAuto()
         return
     endif
     if fnamemodify(expand("%"), ":.") != g:codeCurrentRelativePath
@@ -54,9 +59,14 @@ function! CodeOnFileRefresh()
     call CodeOnAnyWindowScrolled()
 endfunction
 
+function! CodeOnWindowChanged()
+    let g:codeUserWinId = win_getid()
+    call CodeOnFileRefresh()
+endfunction
+
 if exists("g:codeSessionsFile")
     function! CodeCloseWithNext(nextSessionPath)
-        if !g:codeAutocommandsEnabled
+        if !CodeShouldRunAuto()
             return
         endif
         call system($HOME.."/.sh/WriteLeastRecentlyUsed "..g:codeSessionsFile.." "..a:nextSessionPath)
@@ -70,4 +80,6 @@ endif
 
 autocmd WinScrolled * call CodeOnAnyWindowScrolled()
 autocmd BufWritePost * call CodeOnFileOpened(expand("%"), 1)
+autocmd WinEnter * call CodeOnWindowChanged()
+autocmd SessionLoadPost * call CodeOnWindowChanged()
 autocmd BufWinEnter * call CodeOnFileRefresh()
