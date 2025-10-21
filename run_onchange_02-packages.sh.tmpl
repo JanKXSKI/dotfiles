@@ -19,7 +19,7 @@ brew install {{ . | quote }}
 {{ end -}}
 {{ end -}}
 
-mkdir -P ~/.chezmoi-npm
+mkdir -p ~/.chezmoi-npm
 cd ~/.chezmoi-npm
 {{ range .npm -}}
 npm install {{ . }}
