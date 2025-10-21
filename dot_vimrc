@@ -42,6 +42,7 @@ tnoremap vv <C-W>N
 set tabstop=4
 set shiftwidth=4 smarttab expandtab
 set listchars=eol:¬,tab:»\ ,trail:~,extends:>,precedes:<,space:⸱
+set fillchars=vert:│
 set list
 highlight SpecialKey ctermfg=darkgrey
 highlight NonText ctermfg=darkgrey
@@ -73,6 +74,7 @@ hi! link StatusLineTerm StatusLine
 hi! link StatusLineTermNC StatusLineNC
 set laststatus=2
 hi normal ctermfg=NONE ctermbg=NONE
+hi VertSplit ctermbg=NONE ctermfg=237
 
 map <expr> <Leader>f TerminalAwareEasymotionAction("bd-f2")
 map <expr> <Leader>t TerminalAwareEasymotionAction("bd-t2")
