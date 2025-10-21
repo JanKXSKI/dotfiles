@@ -8,6 +8,7 @@ packages:
     - ncurses-devel
     - nc
     - bc
+    - npm
   wget:
     - url: https://github.com/wfxr/code-minimap/releases/download/v0.6.8/code-minimap-v0.6.8-x86_64-unknown-linux-gnu.tar.gz
       bin: code-minimap
@@ -23,3 +24,4 @@ packages:
     - gawk
     - gsed
     - llvm
+    - npm

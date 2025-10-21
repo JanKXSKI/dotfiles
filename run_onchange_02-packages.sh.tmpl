@@ -18,3 +18,9 @@ rm -f {{ .url | base }}
 brew install {{ . | quote }}
 {{ end -}}
 {{ end -}}
+
+mkdir -P ~/.chezmoi-npm
+cd ~/.chezmoi-npm
+{{ range .npm -}}
+npm install {{ . }}
+{{ end -}}
