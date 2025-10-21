@@ -17,6 +17,7 @@ nnoremap gf :hide normal! gF <CR>
 
 let mapleader = " "
 
+map <Leader>v <C-V>
 nnoremap <Leader><Backspace> :b # <CR>
 
 nnoremap <Leader>h :call TerminalSensitiveWindowMove("H") <CR>
@@ -87,9 +88,14 @@ let lspOpts = #{autoHighlightDiags: v:true}
 autocmd User LspSetup call LspOptionsSet(lspOpts)
 
 let lspServers = [#{
-            \ name: 'clang',
-            \ filetype: ['h', 'c', 'cpp'],
-            \ path: '/usr/bin/clangd',
-            \ args: ['--background-index']
+            \   name: 'clang',
+            \   filetype: ['h', 'c', 'cpp'],
+            \   path: '/usr/bin/clangd',
+            \   args: ['--background-index']
+            \ }, #{
+            \   name: 'pyright',
+            \   filetype: 'python',
+            \   path: $HOME..'/.chezmoi-npm/node_modules/.bin/pyright-langserver',
+            \   args: ['--stdio'],
             \ }]
 autocmd User LspSetup call LspAddServer(lspServers)
