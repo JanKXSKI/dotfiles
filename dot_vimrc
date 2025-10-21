@@ -84,25 +84,27 @@ set smartcase
 set hlsearch
 hi! CurSearch ctermbg=226 ctermfg=black
 
-let lspOpts = #{autoHighlightDiags: v:true}
+let lspOpts = #{
+            \    showDiagWithSign: v:true
+            \  }
 autocmd User LspSetup call LspOptionsSet(lspOpts)
 
 let lspServers = [#{
-            \   name: 'clang',
-            \   filetype: ['h', 'c', 'cpp'],
-            \   path: '/usr/bin/clangd',
-            \   args: ['--background-index']
-            \ }, #{
-            \   name: 'pyright',
-            \   filetype: 'python',
-            \   path: $HOME..'/.chezmoi-npm/node_modules/.bin/pyright-langserver',
-            \   args: ['--stdio'],
-            \   workspaceConfig: #{
-            \     python: #{
-            \       pythonPath: '/usr/bin/python'
-            \   }},
-            \   debug: 'on',
-            \   traceLevel: 'verbose',
-            \ }]
+            \    name: 'clang',
+            \    filetype: ['h', 'c', 'cpp'],
+            \    path: '/usr/bin/clangd',
+            \    args: ['--background-index']
+            \  }, #{
+            \    name: 'pyright',
+            \    filetype: 'python',
+            \    path: $HOME..'/.chezmoi-npm/node_modules/.bin/pyright-langserver',
+            \    args: ['--stdio'],
+            \    workspaceConfig: #{
+            \      python: #{
+            \        pythonPath: '/usr/bin/python'
+            \    }},
+            \    debug: 'on',
+            \    traceLevel: 'verbose',
+            \  }]
 autocmd User LspSetup call LspAddServer(lspServers)
 nnoremap <Leader>? :LspDiagCurrent <CR>
