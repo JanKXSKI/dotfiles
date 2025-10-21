@@ -70,4 +70,4 @@ endif
 
 autocmd WinScrolled * call CodeOnAnyWindowScrolled()
 autocmd BufWritePost * call CodeOnFileOpened(expand("%"), 1)
-autocmd BufEnter * call CodeOnFileRefresh()
+autocmd BufWinEnter * call CodeOnFileRefresh()

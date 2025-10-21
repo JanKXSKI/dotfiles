@@ -97,5 +97,12 @@ let lspServers = [#{
             \   filetype: 'python',
             \   path: $HOME..'/.chezmoi-npm/node_modules/.bin/pyright-langserver',
             \   args: ['--stdio'],
+            \   workspaceConfig: #{
+            \     python: #{
+            \       pythonPath: '/usr/bin/python'
+            \   }},
+            \   debug: 'on',
+            \   traceLevel: 'verbose',
             \ }]
 autocmd User LspSetup call LspAddServer(lspServers)
+nnoremap <Leader>? :LspDiagCurrent <CR>
