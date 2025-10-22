@@ -42,6 +42,7 @@ function! TerminalNormalModeAwareMotion(commandToExecute)
     silent normal! VpG
     setlocal nolist nonumber nomodified
     execute l:termline.."normal! zt"
+    let &g:undolevels = &g:undolevels
     execute a:commandToExecute
     let l:tempbufnr = bufnr()
     let l:temppos = getcurpos()
