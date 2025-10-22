@@ -31,7 +31,7 @@ nnoremap <Leader>g :call OpGrepWithWordUnderCursor() <CR>
 nnoremap <Leader>b :OpGitLog <CR>
 nnoremap <Leader>d :let @d=expand('%:p').':'.line('.') <bar> let @f=expand('%:p') <bar> let @l=line('w0').','.line('w$') <CR>
 nnoremap <Leader>r :OpSession <CR>
-nnoremap <Leader>p :vertical :terminal <CR>
+nnoremap <Leader>p :vsp <bar> :exe "lcd "..expand("%:h") <bar> :terminal ++curwin <CR>
 nnoremap <Leader>n :LspGotoDefinition <CR>
 
 nnoremap <C-P> :call ToggleCodeTerminal() <CR>
