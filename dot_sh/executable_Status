@@ -18,7 +18,7 @@ while [[ -n $cmd ]] || read cmd; do
             cmd=""
             ;;
         explorer)
-            fzf
+            fzf | xargs -I{} tmux -2 -S "$tmuxSocket" send-keys -t 0 ":e {}" Enter
             cmd="sessions"
             tmux -2 -S "$tmuxSocket" select-pane -t 0
             ;;

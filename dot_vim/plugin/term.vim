@@ -24,10 +24,17 @@ function! TerminalAwareEasymotionAction(easymotionBinding)
     if &buftype != "terminal"
         return "\<Plug>(easymotion-"..a:easymotionBinding..")"
     endif
-    return ":call TerminalNormalModeAwareEasymotion(\""..a:easymotionBinding.."\") \<CR>"
+    return ':call TerminalNormalModeAwareMotion("call feedkeys(''\<Plug>(easymotion-'..a:easymotionBinding..')'', ''x!'')")'.." \<CR>"
 endfunction
 
-function! TerminalNormalModeAwareEasymotion(easymotionBinding)
+function! TerminalAwareGotoWord()
+    if &buftype != "terminal"
+        return ":GotoWord \<CR>"
+    endif
+    return ':call TerminalNormalModeAwareMotion("GotoWord")'.." \<CR>"
+endfunction
+
+function! TerminalNormalModeAwareMotion(commandToExecute)
     let l:termbufnr = bufnr()
     let l:termline = getpos("w0")[1]
     silent % yank
@@ -35,7 +42,7 @@ function! TerminalNormalModeAwareEasymotion(easymotionBinding)
     silent normal! VpG
     setlocal nolist nonumber nomodified
     execute l:termline.."normal! zt"
-    call feedkeys("\<Plug>(easymotion-"..a:easymotionBinding..")", "x!")
+    execute a:commandToExecute
     let l:tempbufnr = bufnr()
     let l:temppos = getcurpos()
     execute "hide buffer "..l:termbufnr

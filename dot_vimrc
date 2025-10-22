@@ -60,6 +60,7 @@ Plug 'junegunn/fzf'
 Plug 'morhetz/gruvbox'
 Plug 'easymotion/vim-easymotion'
 Plug 'yegappan/lsp'
+Plug 'cirnovsky/vim-gotoword'
 call plug#end()
 
 try
@@ -79,6 +80,7 @@ hi VertSplit ctermbg=NONE ctermfg=237
 
 map <expr> <Leader>f TerminalAwareEasymotionAction("bd-f2")
 map <expr> <Leader>t TerminalAwareEasymotionAction("bd-t2")
+map <expr> <Leader>w TerminalAwareGotoWord()
 
 set sessionoptions = "buffers"
 
