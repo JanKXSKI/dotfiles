@@ -1,0 +1,27 @@
+#! /usr/bin/env bash
+
+rund=$(realpath $(dirname $0))/run
+mkdir -p "$rund"
+. ~/.sh/logging.sh "$rund"
+
+width=$1
+height=$2
+sess="$3"
+tmuxSocket="$4"
+
+cmd=""
+while [[ -n $cmd ]] || read cmd; do
+    tput clear
+    case $cmd in
+        sessions)
+            $(dirname $0)/SessionList "$sess" $width $height
+            cmd=""
+            ;;
+        explorer)
+            fzf
+            cmd="sessions"
+            tmux -2 -S "$tmuxSocket" select-pane -t 0
+            ;;
+        *) echo "Unknown command: $cmd"; cmd="" ;;
+    esac
+done

@@ -20,7 +20,12 @@ read explorerPaneId explorerServerPid h <"$rund/$$.fifo"
 explorerServerSocket="$rund/$explorerServerPid.socket"
 explorerHeight=$(($h - $bot - 1))
 
-tmux -2 -S "$tmuxSocket" split-window -dI -t $explorerPaneId -l $bot < <(~/.sh/SessionList "$sess" $side $bot)
+tmux -2 -S "$tmuxSocket" split-window -d -t $explorerPaneId -l $bot \
+    "~/.sh/Status $side $bot '$sess' '$tmuxSocket'"
+tmux -2 -S "$tmuxSocket" pipe-pane -I -t {bottom-right} "echo 'sessions'"
+tmux -2 -S "$tmuxSocket" bind-key -n C-e \
+    pipe-pane -I -t {bottom-right} "echo 'explorer'" \\\; \
+    select-pane -t {bottom-right}
 
 tmux -2 -S "$tmuxSocket" split-window -hdPb -t $explorerPaneId -l $minimapWidth -F "#{pane_pid} #{pane_width} #{pane_height}" "~/.sh/MinimapServer" >"$rund/$$.fifo" &
 read minimapServerPid minimapWidth minimapHeight <"$rund/$$.fifo"
