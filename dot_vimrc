@@ -90,7 +90,7 @@ set hlsearch
 hi! CurSearch ctermbg=226 ctermfg=black
 
 let lspOpts = #{
-            \    showDiagWithSign: v:true
+            \    showDiagWithSign: v:false
             \  }
 autocmd User LspSetup call LspOptionsSet(lspOpts)
 
