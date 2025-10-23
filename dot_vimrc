@@ -60,7 +60,7 @@ Plug 'junegunn/fzf'
 Plug 'morhetz/gruvbox'
 Plug 'easymotion/vim-easymotion'
 Plug 'yegappan/lsp'
-Plug 'cirnovsky/vim-gotoword'
+Plug 'JanKXSKI/vim-gotoword'
 call plug#end()
 
 try
