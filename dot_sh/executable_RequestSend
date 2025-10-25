@@ -1,6 +1,0 @@
-#! /usr/bin/env bash
-
-socket=$1
-shift
-
-echo "$*" | nc -U $socket
