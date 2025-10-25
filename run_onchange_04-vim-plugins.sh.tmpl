@@ -1,8 +1,0 @@
-#!/usr/bin/env bash
-
-{{ range .plugins.vim.autoload.curl -}}
-curl -fLo ~/.vim/autoload/{{- . | base }} --create-dirs {{ . | quote }}
-{{ end -}}
-
-vim -c "PlugInstall | qa"
-
