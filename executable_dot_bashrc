@@ -17,6 +17,7 @@ PS1='\[\033[38;5;214m\]\w \$ \[\033[0m\]'
 
 # Aliases
 alias tmux='tmux -2'
+alias code="$HOME/onavim/tonavim"
 
 # Other configuration
 for f in ~/.bashrc.d/*.sh; do . $f; done
