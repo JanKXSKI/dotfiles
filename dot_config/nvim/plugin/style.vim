@@ -1,1 +1,1 @@
-set laststatus=2
+set laststatus=2 number
