@@ -4,3 +4,4 @@ nnoremap <Leader>; :call ToggleTerminal() <CR>
 inoremap <Leader>; <Esc> :call ToggleTerminal() <CR>
 tnoremap <Leader>; <C-\><C-N>: call ToggleTerminal() <CR>
 tnoremap vv <C-\><C-N>
+tnoremap <C-W> <C-\><C-N><C-W>
