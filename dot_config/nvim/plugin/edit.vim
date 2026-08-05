@@ -19,6 +19,8 @@ nnoremap <Leader>j <C-W>J
 nnoremap <Leader>k <C-W>K
 nnoremap <Leader>l <C-W>L
 
+tnoremap  <C-K> <C-\><C-N><C-W>k
+
 " opening
 nnoremap gf :wincmd F <CR>
 nnoremap <Leader><Backspace> :b # <CR>
