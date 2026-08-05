@@ -1,3 +1,3 @@
-nnoremap <Leader>o :lua require('fff').find_files() <CR>
-nnoremap <Leader>s :vsplit <bar> :lua require('fff').find_files() <CR>
-nnoremap <Leader>g :lua require('fff').live_grep_under_cursor() <CR>
+nnoremap <Leader>o :lua require("fzf-lua").files() <CR>
+nnoremap <Leader>s :vsplit <bar> :lua require("fzf-lua").files() <CR>
+nnoremap <Leader>g :lua require("fzf-lua").grep_cword() <CR>
