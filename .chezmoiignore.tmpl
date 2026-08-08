@@ -1,5 +1,9 @@
 *.swp
 nvim-pack-lock.json
+
 {{ if list "darwin" "linux" | has .chezmoi.os | not }}
 .tmux.conf
+{{ else if list "windows" | has .chezmoi.os | not }}
+pwsh.vim
+Powershell
 {{ end }}
